@@ -1,0 +1,1 @@
+Projekt na SK2, aplikacja na wzór Gadu-Gadu.
