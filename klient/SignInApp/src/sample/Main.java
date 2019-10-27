@@ -21,7 +21,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
 
-        SocketManager.initializeSocketAndConnect("192.168.1.10", 1235);
+        //SocketManager.initializeSocketAndConnect("192.168.0.125", 1235);
 
         Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         Scene scene = new Scene(root);

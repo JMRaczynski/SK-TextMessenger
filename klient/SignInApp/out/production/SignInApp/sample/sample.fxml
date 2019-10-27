@@ -7,11 +7,14 @@
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" styleClass="root" stylesheets="@Talkie.css" xmlns="http://javafx.com/javafx/8.0.231" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
    <children>
-      <TextField fx:id="nickTextField" layoutX="133.0" layoutY="143.0" />
-      <TextField fx:id="passwordTextField" layoutX="133.0" layoutY="203.0" />
-      <Button fx:id="loginButton" layoutX="158.0" layoutY="297.0" mnemonicParsing="false" onAction="#sendCredentialsAndShowFeedback" style="-fx-background-color: #86C1B9;" text="Zaloguj" textFill="WHITE" wrapText="true" />
-      <Label fx:id="nickLabel" layoutX="62.0" layoutY="149.0" text="Nick" textFill="WHITE" />
-      <Label fx:id="passwordLabel" layoutX="62.0" layoutY="209.0" text="Hasło" textFill="WHITE" />
-      <Label fx:id="introductionLabel" layoutX="77.0" layoutY="59.0" text="Witaj! Zaloguj się by rozpocząć" textFill="WHITE" />
+      <TextField fx:id="upperTextField" layoutX="133.0" layoutY="143.0" text="192.168.0.125" />
+      <TextField fx:id="lowerTextField" layoutX="133.0" layoutY="203.0" text="1235" />
+      <Button fx:id="goNextButton" layoutX="137.0" layoutY="309.0" mnemonicParsing="false" onAction="#getConnectionInformation" style="-fx-background-color: #86C1B9;" text="Przejdź dalej" textFill="WHITE" wrapText="true" />
+      <Label fx:id="upperLabel" layoutX="62.0" layoutY="149.0" text="Adres" textFill="WHITE" />
+      <Label fx:id="lowerLabel" layoutX="62.0" layoutY="209.0" text="Port" textFill="WHITE" />
+      <Label fx:id="introductionLabel" layoutX="38.0" layoutY="68.0" text="Witaj! Podaj adres serwera i numer portu" textAlignment="CENTER" textFill="WHITE" />
+      <Label fx:id="warningLabel" layoutX="39.0" layoutY="262.0" text="Dane nieprawidłowe! Spróbuj ponownie" textFill="#d0d0d0" visible="false" />
+      <Button fx:id="loginButton" layoutX="157.0" layoutY="309.0" mnemonicParsing="false" onAction="#sendCredentialsAndShowFeedback" style="-fx-background-color: #86C1B9;" text="Zaloguj" textFill="WHITE" visible="false" wrapText="true" />
+      <Label fx:id="introductionLabel1" layoutX="103.0" layoutY="68.0" text="Zaloguj się by rozpocząć" textAlignment="CENTER" textFill="WHITE" visible="false" />
    </children>
 </Pane>

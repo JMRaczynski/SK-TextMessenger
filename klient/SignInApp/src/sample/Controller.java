@@ -1,12 +1,14 @@
 package sample;
 
 import java.io.IOException;
+import java.net.SocketException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.Parent;
@@ -18,17 +20,51 @@ import javafx.stage.Stage;
 
 public class Controller /*implements Initializable*/ {
     @FXML private Label introductionLabel;
-    @FXML private Label nickLabel;
-    @FXML private Label passwordLabel;
+    @FXML private Label introductionLabel1;
+    @FXML private Label upperLabel;
+    @FXML private Label lowerLabel;
+    @FXML private Label warningLabel;
     @FXML private Button loginButton;
-    @FXML private TextField nickTextField;
-    @FXML private TextField passwordTextField;
+    @FXML private Button goNextButton;
+    @FXML private TextField upperTextField;
+    @FXML private TextField lowerTextField;
 
+
+
+    public void getConnectionInformation(ActionEvent event) throws IOException
+    {
+        String ipAddress = upperTextField.getText();
+        Integer portNumber = Integer.parseInt(lowerTextField.getText());
+        try{
+            SocketManager.initializeSocketAndConnect(ipAddress, portNumber);
+            introductionLabel.setVisible(false);
+            introductionLabel1.setVisible(true);
+            upperLabel.setText("Nick");
+            upperTextField.clear();
+            upperTextField.requestFocus();
+            lowerLabel.setText("Hasło");
+            lowerTextField.clear();
+            loginButton.setVisible(true);
+            goNextButton.setDisable(true);
+            goNextButton.setVisible(false);
+            warningLabel.setVisible(false);
+        }
+        catch (SocketException e){
+            warningLabel.setVisible(true);
+            upperTextField.clear();
+            lowerTextField.clear();
+        }
+        /*
+        TODO put ip adress and port number in right place :)
+         */
+
+    }
 
     public void sendCredentialsAndShowFeedback(ActionEvent event) throws IOException
     {
-        String login = nickTextField.getText();
-        String password = passwordTextField.getText();
+
+        String login = upperTextField.getText();
+        String password = lowerTextField.getText();
         String serverAnswer;
         SocketManager.sendMessage(login + ' ' + password + '\n');
         serverAnswer = SocketManager.receiveMessage();
@@ -45,6 +81,10 @@ public class Controller /*implements Initializable*/ {
 
             window.setScene(logoutScene);
             window.show();
+        }
+        else
+        {
+            warningLabel.setVisible(true);
         }
 
     }
