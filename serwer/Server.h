@@ -1,7 +1,7 @@
 #include "User.h"
 #define MAX_NUMBER_OF_CONCURRENT_CLIENTS 100
-#define BAD_PASSWORD_MESSAGE "Podales niewlasciwe haslo. Sprobuj ponownie\n"
-#define SUCCESSFUL_LOGIN_MESSAGE "Witamy\n"
+#define BAD_PASSWORD_MESSAGE "Podales niewlasciwe haslo. Sprobuj ponownie"
+#define SUCCESSFUL_LOGIN_MESSAGE "Witamy"
 
 class Server {
     public:
@@ -31,7 +31,7 @@ class Server {
         std::vector<User> userInformation;
 
         int assignConnectionId();
-        void parseLoginAndPassword(char *message, std::string *login, std::string *password);
+        void parseLoginAndPassword(int numberOfReadCharacters, char *message, std::string *login, std::string *password);
         void sendResponseToClient(int clientSocketDescriptor, bool isLoginSuccessful);
         bool checkIfCredentialsAreCorrect(std::string login, std::string password);
 };

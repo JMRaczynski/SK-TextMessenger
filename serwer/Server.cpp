@@ -61,7 +61,7 @@ int Server::acceptConnection() {
     std::cout << "Zaakceptowany\n";
     assignedId = assignConnectionId();
     connectionSocketDescriptors[assignedId] = incomingConnectionDescriptor;
-    std::cout << assignedId << std::endl;
+    std::cout << assignedId << " <- Przydzielone Id\n";
     return assignedId;
 }
 
@@ -90,7 +90,6 @@ int Server::assignConnectionId() {
 
 void Server::threadRoutine(int connectionId) {
     //pthread_detach(pthread_self());
-    std::cout << "w watku przed petla\n";
     std::string login, password;
     char messageBuffer[1000];
     int readResult;
@@ -98,22 +97,26 @@ void Server::threadRoutine(int connectionId) {
     bool areCredentialsCorrect = false;
     //struct thread_data_t *threadData = (struct thread_data_t*) threadArgs;
     int clientSocketDescriptor = connectionSocketDescriptors[connectionId];
+    std::cout << "w watku przed petla\n";
     while (!areCredentialsCorrect) {
         memset(messageBuffer, 0, 1000);
+        std::cout << "beforeread\n";
         readResult = read(clientSocketDescriptor, messageBuffer, 101);
+        std::cout << readResult << " <- Ilosc odczytanych bajtow\n";
         if (readResult < 0) {
             //throw readingError;
             fprintf(stderr, "Błąd przy próbie odczytu wiadomosci..\n");
             exit(1);
         }
-        if (strcmp(messageBuffer, "quit\n") == 0) {
-            break;
+        if (messageBuffer[0] == 'q') {
+            std::cout << "no to klient chyba poszedl...\n";
+            
         }
-        parseLoginAndPassword(messageBuffer, &login, &password);
+        parseLoginAndPassword(readResult - 3, messageBuffer, &login, &password);
         areCredentialsCorrect = checkIfCredentialsAreCorrect(login, password);
         sendResponseToClient(clientSocketDescriptor, areCredentialsCorrect);
     }
-    while (strcmp(messageBuffer, "quit\n") != 0) {
+    while (messageBuffer[0] != 'q') {
         memset(messageBuffer, 0, 1000);
         readResult = read(clientSocketDescriptor, messageBuffer, 1000);
         if (readResult < 0) {
@@ -127,14 +130,14 @@ void Server::threadRoutine(int connectionId) {
     isIdBusy[connectionId] = false;
     //delete threadData;
     std::cout << "klient rozlacza sie\n";
-    pthread_exit(NULL);
+    //pthread_exit(NULL);
 }
 
-void Server::parseLoginAndPassword(char *message, std::string *login, std::string *password) {
+void Server::parseLoginAndPassword(int numberOfReadCharacters, char *message, std::string *login, std::string *password) {
     *login = "";
     *password = "";
     unsigned int iterator = 0;
-    for (iterator = 0; iterator < strlen(message); iterator++) {
+    for (iterator = 0; iterator < numberOfReadCharacters; iterator++) {
         if (message[iterator] != ' ') {
             *login += message[iterator];
         }
@@ -143,9 +146,11 @@ void Server::parseLoginAndPassword(char *message, std::string *login, std::strin
             break;
         }
     }
-    for (; iterator < strlen(message); iterator++) {
+    for (; iterator < numberOfReadCharacters; iterator++) {
         *password += message[iterator];
     }
+    std::cout << *login << " <- odczytany login\n";
+    std::cout << *password << " <- odczytane haslo\n";
 }
 
 bool Server::checkIfCredentialsAreCorrect(std::string login, std::string password) {
@@ -167,6 +172,7 @@ void Server::sendResponseToClient(int clientSocketDescriptor, bool isLoginSucces
     else {
         writeResult = write(clientSocketDescriptor, BAD_PASSWORD_MESSAGE, 45);
     }
+    std::cout << writeResult << " <- Dlugosc odeslanej wiadomosci\n";
     if (writeResult < 0) {
         //throw writingError;
         fprintf(stderr, "Błąd przy próbie zapisu wiadomosci..\n");
