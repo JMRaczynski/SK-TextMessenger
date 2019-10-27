@@ -31,7 +31,7 @@ public class Main extends Application {
 
         EventHandler quitHandler = new EventHandler<WindowEvent>() {
             public void handle(WindowEvent we) {
-                SocketManager.sendMessage("quit");
+                if (SocketManager.checkIfClientIsConnectedToServer()) SocketManager.sendMessage("quit");
             }
         };
 

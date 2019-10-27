@@ -9,7 +9,7 @@
    <children>
       <TextField fx:id="upperTextField" layoutX="133.0" layoutY="143.0" text="192.168.0.125" />
       <TextField fx:id="lowerTextField" layoutX="133.0" layoutY="203.0" text="1235" />
-      <Button fx:id="goNextButton" layoutX="137.0" layoutY="309.0" mnemonicParsing="false" onAction="#getConnectionInformation" style="-fx-background-color: #86C1B9;" text="Przejdź dalej" textFill="WHITE" wrapText="true" />
+      <Button fx:id="goNextButton" layoutX="137.0" layoutY="309.0" mnemonicParsing="false" onAction="#connectToServer" style="-fx-background-color: #86C1B9;" text="Przejdź dalej" textFill="WHITE" wrapText="true" />
       <Label fx:id="upperLabel" layoutX="62.0" layoutY="149.0" text="Adres" textFill="WHITE" />
       <Label fx:id="lowerLabel" layoutX="62.0" layoutY="209.0" text="Port" textFill="WHITE" />
       <Label fx:id="introductionLabel" layoutX="38.0" layoutY="68.0" text="Witaj! Podaj adres serwera i numer portu" textAlignment="CENTER" textFill="WHITE" />

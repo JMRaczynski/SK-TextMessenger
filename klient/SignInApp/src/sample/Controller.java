@@ -2,8 +2,10 @@ package sample;
 
 import java.io.IOException;
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.concurrent.TimeoutException;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -31,31 +33,26 @@ public class Controller /*implements Initializable*/ {
 
 
 
-    public void getConnectionInformation(ActionEvent event) throws IOException
+    public void connectToServer(ActionEvent event) throws IOException
     {
         String ipAddress = upperTextField.getText();
-        Integer portNumber = Integer.parseInt(lowerTextField.getText());
-        try{
+        try {
+            Integer portNumber = Integer.parseInt(lowerTextField.getText());
             SocketManager.initializeSocketAndConnect(ipAddress, portNumber);
-            introductionLabel.setVisible(false);
-            introductionLabel1.setVisible(true);
-            upperLabel.setText("Nick");
-            upperTextField.clear();
-            upperTextField.requestFocus();
-            lowerLabel.setText("Hasło");
-            lowerTextField.clear();
-            loginButton.setVisible(true);
-            goNextButton.setDisable(true);
-            goNextButton.setVisible(false);
-            warningLabel.setVisible(false);
         }
-        catch (SocketException e){
+        catch (Exception e) {
+            introductionLabel.setText("Ponów próbę");
             warningLabel.setVisible(true);
-            upperTextField.clear();
-            lowerTextField.clear();
+            //upperTextField.clear();
+            //lowerTextField.clear();
+            return;
         }
+        changeIpInputWindowToLoginWindow();
+        SocketManager.setIsClientConnectedToServer();
         /*
         TODO put ip adress and port number in right place :)
+
+        ?? idk o co chodzi
          */
 
     }
@@ -87,6 +84,20 @@ public class Controller /*implements Initializable*/ {
             warningLabel.setVisible(true);
         }
 
+    }
+
+    private void changeIpInputWindowToLoginWindow() {
+        introductionLabel.setVisible(false);
+        introductionLabel1.setVisible(true);
+        upperLabel.setText("Nick");
+        upperTextField.clear();
+        upperTextField.requestFocus();
+        lowerLabel.setText("Hasło");
+        lowerTextField.clear();
+        loginButton.setVisible(true);
+        goNextButton.setDisable(true);
+        goNextButton.setVisible(false);
+        warningLabel.setVisible(false);
     }
 
     /*public void initialize(URL url, ResourceBundle rb) {
