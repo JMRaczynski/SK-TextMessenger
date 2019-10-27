@@ -25,16 +25,28 @@ public class Controller /*implements Initializable*/ {
     @FXML private TextField passwordTextField;
 
 
-    public void changeScreenButtonPushed(ActionEvent event) throws IOException
+    public void sendCredentialsAndShowFeedback(ActionEvent event) throws IOException
     {
-        Parent tableViewParent = FXMLLoader.load(getClass().getResource("logout.fxml"));
-        Scene logoutScene = new Scene(tableViewParent);
+        String login = nickTextField.getText();
+        String password = passwordTextField.getText();
+        String serverAnswer;
+        SocketManager.sendMessage(login + ' ' + password + '\n');
+        serverAnswer = SocketManager.receiveMessage();
+        System.out.println(serverAnswer);
+        System.out.println(serverAnswer.length());
 
-        //This line gets the Stage information
-        Stage window = (Stage)((Node)event.getSource()).getScene().getWindow();
+        if (serverAnswer.equals("Witamy")) {
+            System.out.println(serverAnswer);
+            Parent tableViewParent = FXMLLoader.load(getClass().getResource("logout.fxml"));
+            Scene logoutScene = new Scene(tableViewParent);
 
-        window.setScene(logoutScene);
-        window.show();
+            //This line gets the Stage information
+            Stage window = (Stage)((Node)event.getSource()).getScene().getWindow();
+
+            window.setScene(logoutScene);
+            window.show();
+        }
+
     }
 
     /*public void initialize(URL url, ResourceBundle rb) {

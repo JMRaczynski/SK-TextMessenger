@@ -9,7 +9,7 @@
    <children>
       <TextField fx:id="nickTextField" layoutX="133.0" layoutY="143.0" />
       <TextField fx:id="passwordTextField" layoutX="133.0" layoutY="203.0" />
-      <Button fx:id="loginButton" layoutX="158.0" layoutY="297.0" mnemonicParsing="false" onAction="#changeScreenButtonPushed" style="-fx-background-color: #86C1B9;" text="Zaloguj" textFill="WHITE" wrapText="true" />
+      <Button fx:id="loginButton" layoutX="158.0" layoutY="297.0" mnemonicParsing="false" onAction="#sendCredentialsAndShowFeedback" style="-fx-background-color: #86C1B9;" text="Zaloguj" textFill="WHITE" wrapText="true" />
       <Label fx:id="nickLabel" layoutX="62.0" layoutY="149.0" text="Nick" textFill="WHITE" />
       <Label fx:id="passwordLabel" layoutX="62.0" layoutY="209.0" text="Hasło" textFill="WHITE" />
       <Label fx:id="introductionLabel" layoutX="77.0" layoutY="59.0" text="Witaj! Zaloguj się by rozpocząć" textFill="WHITE" />
