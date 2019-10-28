@@ -21,8 +21,8 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 public class Controller /*implements Initializable*/ {
-    @FXML private Label introductionLabel;
-    @FXML private Label introductionLabel1;
+    @FXML private Label ipPortIntroductionLabel;
+    @FXML private Label loginIntroductionLabel;
     @FXML private Label upperLabel;
     @FXML private Label lowerLabel;
     @FXML private Label warningLabel;
@@ -41,19 +41,12 @@ public class Controller /*implements Initializable*/ {
             SocketManager.initializeSocketAndConnect(ipAddress, portNumber);
         }
         catch (Exception e) {
-            introductionLabel.setText("Ponów próbę");
             warningLabel.setVisible(true);
-            //upperTextField.clear();
-            //lowerTextField.clear();
+            upperTextField.requestFocus();
             return;
         }
         changeIpInputWindowToLoginWindow();
         SocketManager.setIsClientConnectedToServer();
-        /*
-        TODO put ip adress and port number in right place :)
-
-        ?? idk o co chodzi
-         */
 
     }
 
@@ -87,8 +80,8 @@ public class Controller /*implements Initializable*/ {
     }
 
     private void changeIpInputWindowToLoginWindow() {
-        introductionLabel.setVisible(false);
-        introductionLabel1.setVisible(true);
+        ipPortIntroductionLabel.setVisible(false);
+        loginIntroductionLabel.setVisible(true);
         upperLabel.setText("Nick");
         upperTextField.clear();
         upperTextField.requestFocus();
