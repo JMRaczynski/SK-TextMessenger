@@ -21,8 +21,6 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
 
-        //SocketManager.initializeSocketAndConnect("192.168.0.125", 1235);
-
         Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
@@ -31,7 +29,7 @@ public class Main extends Application {
 
         EventHandler quitHandler = new EventHandler<WindowEvent>() {
             public void handle(WindowEvent we) {
-                if (SocketManager.checkIfClientIsConnectedToServer()) SocketManager.sendMessage("quit");
+                if (SocketManager.checkIfClientIsConnectedToServer()) SocketManager.sendMessage("quit", "q");
             }
         };
 
