@@ -91,18 +91,19 @@ int Server::assignConnectionId() {
 void Server::threadRoutine(int connectionId) {
     //pthread_detach(pthread_self());
     std::string login, password;
-    char messageBuffer[1000];
+    char messageBuffer[BUFFER_SIZE];
+    memset(messageBuffer, 0, BUFFER_SIZE);
     int readResult;
-    //int writeResult;
     bool areCredentialsCorrect = false;
     //struct thread_data_t *threadData = (struct thread_data_t*) threadArgs;
     int clientSocketDescriptor = connectionSocketDescriptors[connectionId];
     std::cout << "w watku przed petla\n";
-    while (!areCredentialsCorrect) {
-        memset(messageBuffer, 0, 1000);
+    while (messageBuffer[0] != 'q') {
+        memset(messageBuffer, 0, BUFFER_SIZE);
         std::cout << "beforeread\n";
-        readResult = read(clientSocketDescriptor, messageBuffer, 101);
+        readResult = read(clientSocketDescriptor, messageBuffer, BUFFER_SIZE);
         std::cout << readResult << " <- Ilosc odczytanych bajtow\n";
+        std::cout << "Odczytana wiadomosc -> " << messageBuffer;
         if (readResult < 0) {
             //throw readingError;
             fprintf(stderr, "Błąd przy próbie odczytu wiadomosci..\n");
@@ -112,22 +113,20 @@ void Server::threadRoutine(int connectionId) {
             std::cout << "no to klient chyba poszedl...\n";
             
         }
-        parseLoginAndPassword(readResult - 3, messageBuffer, &login, &password);
-        areCredentialsCorrect = checkIfCredentialsAreCorrect(login, password);
-        sendResponseToClient(clientSocketDescriptor, areCredentialsCorrect);
-    }
-    while (messageBuffer[0] != 'q') {
-        memset(messageBuffer, 0, 1000);
-        readResult = read(clientSocketDescriptor, messageBuffer, 1000);
-        if (readResult < 0) {
-            //throw readingError;
-            fprintf(stderr, "Błąd przy próbie odczytu wiadomosci..\n");
-            exit(1);
+        switch (messageBuffer[0]) {
+        case 'l':
+            parseLoginAndPassword(readResult - 3, messageBuffer, &login, &password);
+            areCredentialsCorrect = checkIfCredentialsAreCorrectAndAddUserDataIfHeIsNew(login, password);
+            sendResponseToClient(clientSocketDescriptor, areCredentialsCorrect);
+            break;
+        case 'o':
+            setUserAsOffline(login);
+            break;
         }
-        std::cout << messageBuffer;
     }
 
     isIdBusy[connectionId] = false;
+    setUserAsOffline(login);
     //delete threadData;
     std::cout << "klient rozlacza sie\n";
     //pthread_exit(NULL);
@@ -136,8 +135,8 @@ void Server::threadRoutine(int connectionId) {
 void Server::parseLoginAndPassword(int numberOfReadCharacters, char *message, std::string *login, std::string *password) {
     *login = "";
     *password = "";
-    unsigned int iterator = 0;
-    for (iterator = 0; iterator < numberOfReadCharacters; iterator++) {
+    unsigned int iterator;
+    for (iterator = 1; iterator < numberOfReadCharacters; iterator++) {
         if (message[iterator] != ' ') {
             *login += message[iterator];
         }
@@ -153,7 +152,7 @@ void Server::parseLoginAndPassword(int numberOfReadCharacters, char *message, st
     std::cout << *password << " <- odczytane haslo\n";
 }
 
-bool Server::checkIfCredentialsAreCorrect(std::string login, std::string password) {
+bool Server::checkIfCredentialsAreCorrectAndAddUserDataIfHeIsNew(std::string login, std::string password) {
     for (unsigned int i = 0; i < userInformation.size(); i++) {
         if (userInformation[i].username.compare(login) == 0) {
             if (userInformation[i].password.compare(password) == 0) return true;
@@ -177,6 +176,14 @@ void Server::sendResponseToClient(int clientSocketDescriptor, bool isLoginSucces
         //throw writingError;
         fprintf(stderr, "Błąd przy próbie zapisu wiadomosci..\n");
         exit(1);
+    }
+}
+
+void Server::setUserAsOffline(std::string login) {
+    for (unsigned int i = 0; i < userInformation.size(); i++) {
+        if (userInformation[i].username.compare(login) == 0) {
+            userInformation[i].isOnline = false;
+        }
     }
 }
 

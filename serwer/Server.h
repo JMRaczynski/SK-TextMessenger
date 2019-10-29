@@ -1,5 +1,6 @@
 #include "User.h"
 #define MAX_NUMBER_OF_CONCURRENT_CLIENTS 100
+#define BUFFER_SIZE 1000
 #define BAD_PASSWORD_MESSAGE "Podales niewlasciwe haslo. Sprobuj ponownie"
 #define SUCCESSFUL_LOGIN_MESSAGE "Witamy"
 
@@ -33,5 +34,6 @@ class Server {
         int assignConnectionId();
         void parseLoginAndPassword(int numberOfReadCharacters, char *message, std::string *login, std::string *password);
         void sendResponseToClient(int clientSocketDescriptor, bool isLoginSuccessful);
-        bool checkIfCredentialsAreCorrect(std::string login, std::string password);
+        bool checkIfCredentialsAreCorrectAndAddUserDataIfHeIsNew(std::string login, std::string password);
+        void setUserAsOffline(std::string login);
 };
