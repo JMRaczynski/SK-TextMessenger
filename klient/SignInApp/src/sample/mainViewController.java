@@ -21,18 +21,36 @@ public class mainViewController {
     //@FXML private Pane mainViewBackground;
     @FXML private ListView listOfActive;
     @FXML private Button newMessageButton;
+    private ObservableList<String> userList;
 
 
-    public void showActiveUsers(ActionEvent event) throws IOException
+    public void showActiveUsers(String[] users) throws IOException
     {
-        ObservableList<String> userList = FXCollections.<String>observableArrayList("Apple", "Banana", "Orange", "Mango", "Grape", "Coconut",
-                "Vanilla", "Pineapple", "Pear", "Lemon");
+        userList = FXCollections.<String>observableArrayList();
+        for (int i = 1; i < users.length; i++) {
+            userList.add(users[i]);
+        }
         listOfActive.setStyle("-fx-font-size: 18px;");
         listOfActive.getItems().addAll(userList);
         listOfActive.getSelectionModel().getSelectedItem();
         newMessageButton.setBackground(Background.EMPTY);
         newMessageButton.setStyle("-fx-background-image: url('http://icons.iconarchive.com/icons/google/noto-emoji-objects/512/62891-envelope-with-arrow-icon.png')");
 
+    }
+
+    public void logoutButtonHandler(ActionEvent event) throws IOException {
+        SocketManager.sendMessage("sampletext", "o");
+
+    }
+
+    public void addUserToList(String username) {
+        userList.add(username);
+        listOfActive.getItems().add(userList.get(userList.size() - 1));
+    }
+
+    public void removeUserFromList(String username) {
+        listOfActive.getItems().remove(username);
+        userList.remove(username);
     }
 
 }

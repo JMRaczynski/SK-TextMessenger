@@ -10,13 +10,13 @@
 
 <Pane fx:id="mainViewBackground" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="400.0" style="-fx-background-color: #585858;" stylesheets="@Talkie.css" xmlns="http://javafx.com/javafx/8.0.231" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.mainViewController">
    <children>
-      <Button fx:id="logoutButton" layoutX="288.0" layoutY="24.0" mnemonicParsing="false" style="-fx-background-color: #86C1B9;" text="Wyloguj" textFill="WHITE" />
+      <Button fx:id="logoutButton" layoutX="288.0" layoutY="24.0" mnemonicParsing="false" onAction="#logoutButtonHandler" style="-fx-background-color: #86C1B9;" text="Wyloguj" textFill="WHITE" />
       <TitledPane layoutX="14.0" layoutY="79.0" prefHeight="438.0" prefWidth="379.0" text="Aktywni użytkownicy">
          <content>
             <ListView fx:id="listOfActive" prefHeight="454.0" prefWidth="377.0" />
          </content>
       </TitledPane>
-      <Button fx:id="showActive" layoutX="14.0" layoutY="536.0" mnemonicParsing="false" onAction="#showActiveUsers" prefWidth="106.0" text="Pokaż" />
+      <Button fx:id="showActive" layoutX="14.0" layoutY="536.0" mnemonicParsing="false" prefWidth="106.0" text="Pokaż" />
       <Button fx:id="newMessageButton" layoutX="25.0" layoutY="26.0" prefHeight="26.0" prefWidth="26.0">
          <graphic>
             <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
