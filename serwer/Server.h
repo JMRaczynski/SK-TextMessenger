@@ -3,6 +3,7 @@
 #define BUFFER_SIZE 1000
 #define BAD_PASSWORD_MESSAGE "Podales niewlasciwe haslo. Sprobuj ponownie"
 #define SUCCESSFUL_LOGIN_MESSAGE "Witamy"
+#define LOGOUT_MESSAGE "Klient sie wylogowal"
 
 class Server {
     public:
@@ -35,5 +36,10 @@ class Server {
         void parseLoginAndPassword(int numberOfReadCharacters, char *message, std::string *login, std::string *password);
         void sendResponseToClient(int clientSocketDescriptor, bool isLoginSuccessful);
         bool checkIfCredentialsAreCorrectAndAddUserDataIfHeIsNew(std::string login, std::string password);
-        void setUserAsOffline(std::string login);
+        unsigned int getUserIndex(std::string login);
+        void setUserAsOffline(unsigned int userIndex);
+        void setUserAsOnline(unsigned int userIndex);
+        std::string getListOfOnlineUsers(unsigned int userIndex);
+        void announceStateChange(unsigned int userIndex, int clientSocketDescriptor, std::string typeOfChange);
+        void sendListOfOnlineUsersToClient(int clientSocketDescriptor, std::string list);
 };
