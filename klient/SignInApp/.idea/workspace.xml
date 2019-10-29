@@ -2,14 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="">
+      <change afterPath="$PROJECT_DIR$/src/sample/mainViewController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/SignInApp/sample/Controller.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/SignInApp/sample/Controller.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/SignInApp/sample/Main$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/SignInApp/sample/Main$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/SignInApp/sample/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/SignInApp/sample/Main.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/SignInApp/sample/SocketManager.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/SignInApp/sample/SocketManager.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Controller.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/sample/Controller.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/sample/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/SocketManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/sample/SocketManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/SignInApp/sample/Controller.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/SignInApp/sample/logout.fxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/SignInApp/sample/sample.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/SignInApp/sample/sample.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/sample/Controller.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/sample/loginController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/sample/logout.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/sample/mainView.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/sample/sample.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/sample/sample.fxml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -213,6 +213,7 @@
       <workItem from="1572175477986" duration="3084000" />
       <workItem from="1572180368621" duration="18889000" />
       <workItem from="1572209643097" duration="4808000" />
+      <workItem from="1572349327305" duration="10633000" />
     </task>
     <servers />
   </component>

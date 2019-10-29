@@ -1,16 +1,9 @@
 package sample;
 
 import java.io.IOException;
-import java.net.SocketException;
-import java.net.SocketTimeoutException;
-import java.net.URL;
-import java.util.ResourceBundle;
-import java.util.concurrent.TimeoutException;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.Parent;
@@ -20,7 +13,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
-public class Controller /*implements Initializable*/ {
+public class loginController /*implements Initializable*/ {
     @FXML private Label ipPortIntroductionLabel;
     @FXML private Label loginIntroductionLabel;
     @FXML private Label upperLabel;
@@ -63,13 +56,14 @@ public class Controller /*implements Initializable*/ {
 
         if (serverAnswer.equals("Witamy")) {
             System.out.println(serverAnswer);
-            Parent tableViewParent = FXMLLoader.load(getClass().getResource("logout.fxml"));
-            Scene logoutScene = new Scene(tableViewParent);
+            Parent tableViewParent = FXMLLoader.load(getClass().getResource("mainView.fxml"));
+            Scene mainScene = new Scene(tableViewParent);
 
             //This line gets the Stage information
             Stage window = (Stage)((Node)event.getSource()).getScene().getWindow();
 
-            window.setScene(logoutScene);
+            window.setScene(mainScene);
+
             window.show();
         }
         else
@@ -91,6 +85,10 @@ public class Controller /*implements Initializable*/ {
         goNextButton.setDisable(true);
         goNextButton.setVisible(false);
         warningLabel.setVisible(false);
+
+        //DOUSUNIECIA
+        upperTextField.setText("adolf");
+        lowerTextField.setText("hitler");
     }
 
     /*public void initialize(URL url, ResourceBundle rb) {
