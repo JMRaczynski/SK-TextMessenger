@@ -56,7 +56,7 @@ public class Controller /*implements Initializable*/ {
         String login = upperTextField.getText();
         String password = lowerTextField.getText();
         String serverAnswer;
-        SocketManager.sendMessage(login + ' ' + password + '\n');
+        SocketManager.sendMessage(login + ' ' + password + '\n', "l");
         serverAnswer = SocketManager.receiveMessage();
         System.out.println(serverAnswer);
         System.out.println(serverAnswer.length());

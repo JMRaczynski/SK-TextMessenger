@@ -17,7 +17,8 @@ public class SocketManager {
         inputStream = mySocket.getInputStream();
     }
 
-    static public void sendMessage(String message) {
+    static public void sendMessage(String message, String prefix) {
+        message = prefix + message;
         outputStream.println(message);
     }
 
