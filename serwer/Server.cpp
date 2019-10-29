@@ -90,43 +90,54 @@ int Server::assignConnectionId() {
 
 void Server::threadRoutine(int connectionId) {
     //pthread_detach(pthread_self());
-    std::string login, password;
-    char messageBuffer[BUFFER_SIZE];
-    memset(messageBuffer, 0, BUFFER_SIZE);
+    std::string login, password, listOfOnlineUsers;
+    char receivedMessageBuffer[BUFFER_SIZE];
+    char sentMessageBuffer[BUFFER_SIZE];
+    memset(receivedMessageBuffer, 0, BUFFER_SIZE);
     int readResult;
+    unsigned int userIndex;
     bool areCredentialsCorrect = false;
     //struct thread_data_t *threadData = (struct thread_data_t*) threadArgs;
     int clientSocketDescriptor = connectionSocketDescriptors[connectionId];
     std::cout << "w watku przed petla\n";
-    while (messageBuffer[0] != 'q') {
-        memset(messageBuffer, 0, BUFFER_SIZE);
+    while (receivedMessageBuffer[0] != 'q') {
+        memset(receivedMessageBuffer, 0, BUFFER_SIZE);
+        memset(sentMessageBuffer, 0, BUFFER_SIZE);
         std::cout << "beforeread\n";
-        readResult = read(clientSocketDescriptor, messageBuffer, BUFFER_SIZE);
+        readResult = read(clientSocketDescriptor, receivedMessageBuffer, BUFFER_SIZE);
         std::cout << readResult << " <- Ilosc odczytanych bajtow\n";
-        std::cout << "Odczytana wiadomosc -> " << messageBuffer;
+        std::cout << "Odczytana wiadomosc -> " << receivedMessageBuffer;
         if (readResult < 0) {
             //throw readingError;
             fprintf(stderr, "Błąd przy próbie odczytu wiadomosci..\n");
             exit(1);
         }
-        if (messageBuffer[0] == 'q') {
+        if (receivedMessageBuffer[0] == 'q') {
             std::cout << "no to klient chyba poszedl...\n";
             
         }
-        switch (messageBuffer[0]) {
+        switch (receivedMessageBuffer[0]) {
         case 'l':
-            parseLoginAndPassword(readResult - 3, messageBuffer, &login, &password);
+            parseLoginAndPassword(readResult - 3, receivedMessageBuffer, &login, &password);
             areCredentialsCorrect = checkIfCredentialsAreCorrectAndAddUserDataIfHeIsNew(login, password);
+            userIndex = getUserIndex(login);
             sendResponseToClient(clientSocketDescriptor, areCredentialsCorrect);
+            if (areCredentialsCorrect) {
+                setUserAsOnline(userIndex);
+                listOfOnlineUsers = getListOfOnlineUsers(userIndex);
+                announceStateChange(userIndex, clientSocketDescriptor, "i ");
+                sendListOfOnlineUsersToClient(clientSocketDescriptor, listOfOnlineUsers);
+            }
             break;
         case 'o':
-            setUserAsOffline(login);
+            setUserAsOffline(userIndex);
             break;
         }
     }
 
+    announceStateChange(userIndex, clientSocketDescriptor, "o ");
     isIdBusy[connectionId] = false;
-    setUserAsOffline(login);
+    setUserAsOffline(userIndex);
     //delete threadData;
     std::cout << "klient rozlacza sie\n";
     //pthread_exit(NULL);
@@ -163,6 +174,14 @@ bool Server::checkIfCredentialsAreCorrectAndAddUserDataIfHeIsNew(std::string log
     return true;
 }
 
+unsigned int Server::getUserIndex(std::string login) {
+    for (unsigned int i = 0; i < userInformation.size(); i++) {
+        if (userInformation[i].username.compare(login) == 0) {
+            return i;
+        }
+    }
+}
+
 void Server::sendResponseToClient(int clientSocketDescriptor, bool isLoginSuccessful) {
     int writeResult = 0;
     if (isLoginSuccessful) {
@@ -179,11 +198,55 @@ void Server::sendResponseToClient(int clientSocketDescriptor, bool isLoginSucces
     }
 }
 
-void Server::setUserAsOffline(std::string login) {
+void Server::setUserAsOffline(unsigned int userIndex) {
+    userInformation[userIndex].isOnline = false;
+}
+
+void Server::setUserAsOnline(unsigned int userIndex) {
+    userInformation[userIndex].isOnline = true;
+}
+
+std::string Server::getListOfOnlineUsers(unsigned int userIndex) {
+    std::string list = "l ";
     for (unsigned int i = 0; i < userInformation.size(); i++) {
-        if (userInformation[i].username.compare(login) == 0) {
-            userInformation[i].isOnline = false;
+        if (i != userIndex && userInformation[i].isOnline) {
+            list = list + userInformation[i].username + " ";
         }
+    }
+    list += "  ";
+    std::cout << list << "<- lista ludzi online\n";
+    return list;
+}
+
+void Server::announceStateChange(unsigned int myIndex, int mySocketDescriptor, std::string changeType) {
+    int writeResult;
+    std::string message = changeType + userInformation[myIndex].username + "  ";
+    char messageBuffer[BUFFER_SIZE];
+    strcpy(messageBuffer, message.c_str());
+    for (int i = 0; i < MAX_NUMBER_OF_CONCURRENT_CLIENTS; i++) {
+        if (isIdBusy[i] && connectionSocketDescriptors[i] != mySocketDescriptor) {
+            writeResult = write(connectionSocketDescriptors[i], messageBuffer, message.length());
+            if (writeResult < 0) {
+                //throw writingError;
+                fprintf(stderr, "Błąd przy próbie zapisu wiadomosci..\n");
+                exit(1);
+            }
+        }
+    }
+}
+
+void Server::sendListOfOnlineUsersToClient(int clientSocketDescriptor, std::string list) {
+    int writeResult = 0;
+    char messageBuffer[list.length() + 1];
+    strcpy(messageBuffer, list.c_str());
+    std::cout << messageBuffer << "<- lista ludzi online\n";
+    std::cout << strlen(messageBuffer) << "<- dlugosc listy\n";
+    writeResult = write(clientSocketDescriptor, messageBuffer, strlen(messageBuffer));
+    std::cout << messageBuffer << " <- Dlugosc odeslanej listy\n";
+    if (writeResult < 0) {
+        //throw writingError;
+        fprintf(stderr, "Błąd przy próbie zapisu wiadomosci..\n");
+        exit(1);
     }
 }
 
