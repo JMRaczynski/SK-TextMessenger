@@ -55,10 +55,10 @@ public class loginController /*implements Initializable*/ {
                     received = SocketManager.receiveMessage();
                     System.out.println("Wiadomosc: " + received);
                     switch(received.charAt(0)) {
-                        case 'P':
+                        case 'P': // blad logowania
                             warningLabel.setVisible(true);
                             break;
-                        case 'W':
+                        case 'W': // witamy - poprawne zalogowanie
                             Platform.runLater(new Runnable() {
                                 @Override
                                 public void run() {
@@ -70,7 +70,7 @@ public class loginController /*implements Initializable*/ {
                                 }
                             });
                             break;
-                        case 'l':
+                        case 'l': // przeslanie listy uzytkownikow po poprawnym zalogowaniu
                             String[] users = received.split(" ");
                             Platform.runLater(new Runnable() {
                                 @Override
@@ -153,6 +153,12 @@ public class loginController /*implements Initializable*/ {
         lowerTextField.setText("hitler");
     }
 
+    public Scene loginView() throws IOException{
+        Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
+        Scene scene = new Scene(root);
+        return scene;
+    }
+
     private mainViewController switchSceneToMainView() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("mainView.fxml"));
         Parent tableViewParent = loader.load();
@@ -161,9 +167,11 @@ public class loginController /*implements Initializable*/ {
 
         //This line gets the Stage information
         Stage window = (Stage)(loginButton).getScene().getWindow();
-
+        window.setTitle("TalkieApp - " + upperTextField.getText());
         try {
+
             window.setScene(mainScene);
+
         }
         catch (Exception e) {
             e.printStackTrace();

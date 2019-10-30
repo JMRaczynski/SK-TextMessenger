@@ -2,6 +2,7 @@ package sample;
 
 import java.io.IOException;
 
+import javafx.beans.value.ObservableStringValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -21,6 +22,7 @@ public class mainViewController {
     //@FXML private Pane mainViewBackground;
     @FXML private ListView listOfActive;
     @FXML private Button newMessageButton;
+    @FXML private Button logoutButton;
     private ObservableList<String> userList;
 
 
@@ -39,8 +41,19 @@ public class mainViewController {
     }
 
     public void logoutButtonHandler(ActionEvent event) throws IOException {
-        SocketManager.sendMessage("sampletext", "o");
 
+        SocketManager.sendMessage("sampletext", "o");
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("sample.fxml"));
+        Parent logViewParent = loader.load();
+        Scene logScene = new Scene(logViewParent);
+        Stage window = (Stage)(logoutButton).getScene().getWindow();
+        try {
+            window.setScene(logScene);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        window.show();
     }
 
     public void addUserToList(String username) {
@@ -51,6 +64,11 @@ public class mainViewController {
     public void removeUserFromList(String username) {
         listOfActive.getItems().remove(username);
         userList.remove(username);
+    }
+
+    public void switchToChatView(){
+        ObservableList<String> chosen = listOfActive.getSelectionModel().getSelectedItems();
+        System.out.println(chosen.get(0));
     }
 
 }
