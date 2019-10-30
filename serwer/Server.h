@@ -17,6 +17,7 @@ class Server {
         struct sockaddr_in address;
         int socketDescriptor;
         int connectionSocketDescriptors[MAX_NUMBER_OF_CONCURRENT_CLIENTS];
+        int connectionIdsToUserIndexesMap[MAX_NUMBER_OF_CONCURRENT_CLIENTS];
         bool isIdBusy[MAX_NUMBER_OF_CONCURRENT_CLIENTS];
 
         Server(uint16_t portNumber);
@@ -42,4 +43,5 @@ class Server {
         std::string getListOfOnlineUsers(unsigned int userIndex);
         void announceStateChange(unsigned int userIndex, int clientSocketDescriptor, std::string typeOfChange);
         void sendListOfOnlineUsersToClient(int clientSocketDescriptor, std::string list);
+        void sendMessage(char* messageBuffer);
 };

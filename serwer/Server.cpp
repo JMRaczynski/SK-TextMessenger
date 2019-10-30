@@ -17,6 +17,9 @@ Server::Server(uint16_t portNumber) {
     address.sin_addr.s_addr = htonl(INADDR_ANY);
     address.sin_port = htons(portNumber);
     reuseAddressValue = 1;
+    for (int i = 0; i < MAX_NUMBER_OF_CONCURRENT_CLIENTS; i++) {
+        connectionIdsToUserIndexesMap[i] = -1;
+    } 
 }
 
 void Server::initialize(int connectionQueueSize) {
@@ -121,23 +124,34 @@ void Server::threadRoutine(int connectionId) {
             parseLoginAndPassword(readResult - 3, receivedMessageBuffer, &login, &password);
             areCredentialsCorrect = checkIfCredentialsAreCorrectAndAddUserDataIfHeIsNew(login, password);
             userIndex = getUserIndex(login);
+            userInformation[userIndex].socketDescriptor = clientSocketDescriptor;
+            connectionIdsToUserIndexesMap[connectionId] = userIndex;
             sendResponseToClient(clientSocketDescriptor, areCredentialsCorrect);
             if (areCredentialsCorrect) {
-                setUserAsOnline(userIndex);
                 listOfOnlineUsers = getListOfOnlineUsers(userIndex);
                 announceStateChange(userIndex, clientSocketDescriptor, "i ");
                 sendListOfOnlineUsersToClient(clientSocketDescriptor, listOfOnlineUsers);
+                setUserAsOnline(userIndex);
             }
             break;
         case 'o':
+            announceStateChange(userIndex, clientSocketDescriptor, "o ");
             setUserAsOffline(userIndex);
+            connectionIdsToUserIndexesMap[userIndex] = -1;
+            break;
+        case 'm':
+            sendMessage(receivedMessageBuffer);
             break;
         }
     }
 
-    announceStateChange(userIndex, clientSocketDescriptor, "o ");
+    if (userInformation[userIndex].isOnline) {
+        announceStateChange(userIndex, clientSocketDescriptor, "o ");
+        setUserAsOffline(userIndex);
+        connectionIdsToUserIndexesMap[userIndex] = -1;
+    }
     isIdBusy[connectionId] = false;
-    setUserAsOffline(userIndex);
+    userInformation[userIndex].socketDescriptor = -1;
     //delete threadData;
     std::cout << "klient rozlacza sie\n";
     //pthread_exit(NULL);
@@ -224,7 +238,8 @@ void Server::announceStateChange(unsigned int myIndex, int mySocketDescriptor, s
     char messageBuffer[BUFFER_SIZE];
     strcpy(messageBuffer, message.c_str());
     for (int i = 0; i < MAX_NUMBER_OF_CONCURRENT_CLIENTS; i++) {
-        if (isIdBusy[i] && connectionSocketDescriptors[i] != mySocketDescriptor) {
+        //std::cout << connectionIdsToUserIndexesMap[i] << "<- mapa id polaczen na indeksy uzytkownikow\n";
+        if (isIdBusy[i] && connectionIdsToUserIndexesMap[i] != -1 && connectionSocketDescriptors[i] != mySocketDescriptor && userInformation[connectionIdsToUserIndexesMap[i]].isOnline) {
             writeResult = write(connectionSocketDescriptors[i], messageBuffer, message.length());
             if (writeResult < 0) {
                 //throw writingError;
@@ -243,6 +258,39 @@ void Server::sendListOfOnlineUsersToClient(int clientSocketDescriptor, std::stri
     std::cout << strlen(messageBuffer) << "<- dlugosc listy\n";
     writeResult = write(clientSocketDescriptor, messageBuffer, strlen(messageBuffer));
     std::cout << messageBuffer << " <- Dlugosc odeslanej listy\n";
+    if (writeResult < 0) {
+        //throw writingError;
+        fprintf(stderr, "Błąd przy próbie zapisu wiadomosci..\n");
+        exit(1);
+    }
+}
+
+void Server::sendMessage(char* message) {
+    char properMessage[BUFFER_SIZE];
+    std::string recipientNick = "";
+    unsigned int iterator = 2;
+    unsigned int properMessageIndex = 0;
+    for (; iterator < strlen(message); iterator++) {
+        if (message[iterator] == ' ') {
+            iterator++;
+            break;
+        }
+        else recipientNick += message[iterator];
+    }
+    for (; iterator < strlen(message); iterator++) {
+        properMessage[properMessageIndex++] = message[iterator];
+    }
+    unsigned int recipientIndex;
+    for (unsigned int i = 0; i < userInformation.size(); i++) {
+        if (recipientNick.compare(userInformation[i].username) == 0) {
+            recipientIndex = i;
+            break;
+        }
+    }
+    int writeResult;
+    writeResult = write(userInformation[recipientIndex].socketDescriptor, properMessage, strlen(properMessage));
+    std::cout << properMessage << " <- przeslana wiadomosc\n";
+    std::cout << recipientNick << "<- nick odbiorcy\n";
     if (writeResult < 0) {
         //throw writingError;
         fprintf(stderr, "Błąd przy próbie zapisu wiadomosci..\n");

@@ -5,6 +5,7 @@ class User {
         std::string username;
         std::string password;
         bool isOnline;
+        int socketDescriptor;
 
         User(std::string name, std::string password);
         virtual ~User();
