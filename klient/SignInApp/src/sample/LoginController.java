@@ -53,6 +53,7 @@ public class LoginController /*implements Initializable*/ {
                             warningLabel.setVisible(true);
                             break;
                         case 'W': // witamy - poprawne zalogowanie
+                            System.out.println("Jestem " + upperTextField.getText());
                             Platform.runLater(new Runnable() {
                                 @Override
                                 public void run() {
@@ -71,6 +72,7 @@ public class LoginController /*implements Initializable*/ {
                                 public void run() {
                                     try {
                                         mainViewController.showActiveUsers(users);
+                                        mainViewController.initializeUnreadAuthorsList();
                                     } catch (IOException e) {
                                         e.printStackTrace();
                                     }
@@ -95,9 +97,29 @@ public class LoginController /*implements Initializable*/ {
                                 }
                             });
                             break;
-
+                        case 'm':
+                            String[] senderAndMessage = received.split(" ");
+                            String properMessage = "";
+                            System.out.println("Od: " + senderAndMessage[1]);
+                            for (int i = 2; i < senderAndMessage.length; i++) {
+                                properMessage = properMessage + senderAndMessage[i];
+                                if (i != senderAndMessage.length - 1) {
+                                    properMessage += " ";
+                                }
+                            }
+                            System.out.println("Treść: " + properMessage);
+                            boolean wasAuthorAdded;
+                            wasAuthorAdded = mainViewController.addAuthorToListOfUnreadAuthorsIfNeeded(senderAndMessage[1]);
+                            if (wasAuthorAdded) {
+                                Platform.runLater(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mainViewController.updateNewMessagesLabel();
+                                    }
+                                });
+                            }
+                            break;
                     }
-
                 }
             }
         };

@@ -38,6 +38,7 @@ public class ChatViewController {
         if (keyEvent.getCode() == KeyCode.ENTER) {
             String message = writeTextField.getText();
             if (!message.equals(null)) {
+                SocketManager.sendMessage(message, "m " + mainViewController.messageRecipient + " ");
                 textFlow.getChildren().addAll(new Text(message + "\n"));
             }
             writeTextField.clear();
@@ -53,6 +54,7 @@ public class ChatViewController {
         catch (Exception e) {
             e.printStackTrace();
         }
+        mainViewController.messageRecipient = "";
         System.out.println("gb");
     }
 

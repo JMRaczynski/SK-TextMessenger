@@ -1,6 +1,9 @@
 package sample;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.lang.Math;
+import java.lang.reflect.Array;
 
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
@@ -18,10 +21,14 @@ public class MainViewController {
     @FXML private Button newMessageButton;
     @FXML private Button logoutButton;
     @FXML private Button openChatButton;
+    @FXML private Label newMessageLabel;
     private ObservableList<String> userList;
     public LoginController loginController;
     public ChatViewController chatViewController;
     public Scene mainViewScene;
+    public String messageRecipient = "";
+    private String[] newMessageLabels = {"Brak nowych wiadomości", "1 nowa wiadomość", "2 nowe wiadomości", "2+ nowe wiadomości"};
+    private ArrayList<String> unreadMessagesAuthors;
     //public Scene loginScene;
 
     public void showActiveUsers(String[] users) throws IOException
@@ -72,8 +79,36 @@ public class MainViewController {
         catch (Exception e){
             e.printStackTrace();
         }
-        System.out.println(chosen.get(0));
-
+        messageRecipient = chosen.get(0);
+        boolean wasAuthorRemoved;
+        wasAuthorRemoved = removeAuthorFromListOfUnreadAuthorsIfNeeded(messageRecipient);
+        if (wasAuthorRemoved) {
+            System.out.println("UPDATE!");
+            updateNewMessagesLabel();
+        }
     }
 
+    public void initializeUnreadAuthorsList() {
+        unreadMessagesAuthors = new ArrayList<String>();
+    }
+
+    public boolean addAuthorToListOfUnreadAuthorsIfNeeded(String senderNickname) {
+        if (!messageRecipient.equals(senderNickname) && !unreadMessagesAuthors.contains(senderNickname)) {
+            unreadMessagesAuthors.add(senderNickname);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean removeAuthorFromListOfUnreadAuthorsIfNeeded(String senderNickname) {
+        if (unreadMessagesAuthors.contains(senderNickname)) {
+            unreadMessagesAuthors.remove(senderNickname);
+            return true;
+        }
+        return false;
+    }
+
+    public void updateNewMessagesLabel() {
+        newMessageLabel.setText(newMessageLabels[Math.min(3, unreadMessagesAuthors.size())]);
+    }
 }

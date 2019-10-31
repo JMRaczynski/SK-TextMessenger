@@ -26,6 +26,6 @@
             </ImageView>
          </graphic>
       </Button>
-      <Label fx:id="newMessageLabel" layoutX="77.0" layoutY="24.0" prefHeight="39.0" prefWidth="199.0" text="1 nowa wiadomość" textFill="WHITE" />
+      <Label fx:id="newMessageLabel" layoutX="77.0" layoutY="24.0" prefHeight="39.0" prefWidth="199.0" text="brak nowych wiadomości" textFill="WHITE" />
    </children>
 </Pane>
