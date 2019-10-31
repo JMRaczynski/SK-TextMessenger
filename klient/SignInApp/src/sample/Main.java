@@ -1,46 +1,51 @@
 package sample;
 
 import javafx.application.Application;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.event.EventHandler;
 
-
-import javax.naming.ldap.Control;
-import java.io.IOException;
-import java.util.Scanner;
-import java.io.*;
-import java.net.*;
-
 public class Main extends Application {
 
-    private loginController loginController;
-    private mainViewController mainViewController;
+    //private LoginController loginController;
+    //private MainViewController mainViewController;
+    //private ChatViewController chatViewController;
     @Override
     public void start(Stage primaryStage) throws Exception{
-        //inicjalizacja i zapis sceny logowania
+        //inicjalizacja sceny logowania
         FXMLLoader loginLoader = new FXMLLoader(getClass().getResource("sample.fxml"));
         Parent root = loginLoader.load();
-        loginController loginController = loginLoader.getController();
+        LoginController loginController = loginLoader.getController();
         Scene logScene = new Scene(root);
 
-        //inicjalizacja i zapis sceny mainview
+        //inicjalizacja sceny mainview
         FXMLLoader mainLoader = new FXMLLoader(getClass().getResource("mainView.fxml"));
         Parent mainViewNode = mainLoader.load();
-        mainViewController mainController = mainLoader.getController();
+        MainViewController mainController = mainLoader.getController();
         Scene mainScene = new Scene(mainViewNode);
-        System.out.println(mainController.logoutButton.getText());
+
+        //okno czatu
+        FXMLLoader chatLoader = new FXMLLoader(getClass().getResource("chatView.fxml"));
+        Parent chatViewNode = chatLoader.load();
+        ChatViewController chatController = chatLoader.getController();
+        Scene chScene = new Scene(chatViewNode);
+
 
         mainController.mainViewScene = mainScene;
-        mainController.loginScene = logScene;
-        loginController.mainViewScene = mainScene;
+        //mainController.loginScene = logScene;
+        mainController.loginController = loginController;
+        mainController.chatViewController = chatController;
+
+        //loginController.mainViewScene = mainScene;
         loginController.loginScene = logScene;
         loginController.mainViewController = mainController;
-        mainController.loginController = loginController;
+
+        chatController.chatViewScene = chScene;
+        chatController.mainViewController = mainController;
 
         primaryStage.setScene(logScene);
         primaryStage.setTitle("TalkieApp");

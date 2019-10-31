@@ -1,25 +1,18 @@
 package sample;
 
 import java.io.IOException;
-import java.net.InetAddress;
 
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.concurrent.Worker;
 import javafx.event.ActionEvent;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.Background;
 import javafx.stage.Stage;
 import javafx.concurrent.Task;
 
-public class loginController /*implements Initializable*/ {
+public class LoginController /*implements Initializable*/ {
     @FXML private Label ipPortIntroductionLabel;
     @FXML private Label loginIntroductionLabel;
     @FXML private Label upperLabel;
@@ -29,9 +22,10 @@ public class loginController /*implements Initializable*/ {
     @FXML private Button goNextButton;
     @FXML private TextField upperTextField;
     @FXML private TextField lowerTextField;
-    public mainViewController mainViewController;
+    public MainViewController mainViewController;
     public Scene loginScene;
-    public Scene mainViewScene;
+    //public Scene mainViewScene;
+
 
     public void connectToServer(ActionEvent event) throws IOException
     {
@@ -154,25 +148,17 @@ public class loginController /*implements Initializable*/ {
     }
 
     private void switchSceneToMainView() throws IOException {
-        //FXMLLoader loader = new FXMLLoader(getClass().getResource("mainView.fxml"));
-        //Parent tableViewParent = loader.load();
-        //Scene mainScene = new Scene(tableViewParent);
-        //mainViewController controller = loader.getController();
-
         //This line gets the Stage information
         Stage window = (Stage)(loginButton).getScene().getWindow();
         window.setTitle("TalkieApp - " + upperTextField.getText());
         try {
-
-            window.setScene(mainViewScene);
-
+            window.setScene(mainViewController.mainViewScene);
         }
         catch (Exception e) {
             e.printStackTrace();
         }
         System.out.println("dd");
-
-        window.show();
+        //window.show();
         //return controller;
     }
 

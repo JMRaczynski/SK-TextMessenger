@@ -8,7 +8,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.Pane?>
 
-<Pane fx:id="mainViewBackground" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="400.0" style="-fx-background-color: #585858;" stylesheets="@Talkie.css" xmlns="http://javafx.com/javafx/8.0.231" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.mainViewController">
+<Pane fx:id="mainViewBackground" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="400.0" style="-fx-background-color: #585858;" stylesheets="@Talkie.css" xmlns="http://javafx.com/javafx/8.0.231" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.MainViewController">
    <children>
       <Button fx:id="logoutButton" layoutX="288.0" layoutY="24.0" mnemonicParsing="false" onAction="#logoutButtonHandler" style="-fx-background-color: #86C1B9;" text="Wyloguj" textFill="WHITE" />
       <TitledPane collapsible="false" layoutX="14.0" layoutY="79.0" prefHeight="438.0" prefWidth="379.0" text="Aktywni użytkownicy">
@@ -16,7 +16,7 @@
             <ListView fx:id="listOfActive" prefHeight="454.0" prefWidth="377.0" />
          </content>
       </TitledPane>
-      <Button fx:id="openChat" layoutX="105.0" layoutY="535.0" mnemonicParsing="false" onAction="#switchToChatView" prefHeight="39.0" prefWidth="187.0" text="Otwórz konwersację" />
+      <Button fx:id="openChatButton" layoutX="105.0" layoutY="535.0" mnemonicParsing="false" onAction="#switchToChatView" prefHeight="39.0" prefWidth="187.0" text="Otwórz konwersację" />
       <Button fx:id="newMessageButton" layoutX="25.0" layoutY="26.0" prefHeight="26.0" prefWidth="26.0">
          <graphic>
             <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">

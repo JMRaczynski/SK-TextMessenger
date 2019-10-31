@@ -2,31 +2,27 @@ package sample;
 
 import java.io.IOException;
 
-import javafx.beans.value.ObservableStringValue;
 import javafx.event.ActionEvent;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.cell.TextFieldListCell;
 import javafx.fxml.FXML;
 import javafx.scene.layout.Background;
-import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
-public class mainViewController {
+public class MainViewController {
 
     //@FXML private Pane mainViewBackground;
     @FXML private ListView listOfActive;
     @FXML private Button newMessageButton;
-    @FXML public Button logoutButton;
+    @FXML private Button logoutButton;
+    @FXML private Button openChatButton;
     private ObservableList<String> userList;
-    public loginController loginController;
+    public LoginController loginController;
+    public ChatViewController chatViewController;
     public Scene mainViewScene;
-    public Scene loginScene;
+    //public Scene loginScene;
 
     public void showActiveUsers(String[] users) throws IOException
     {
@@ -45,13 +41,10 @@ public class mainViewController {
     public void logoutButtonHandler(ActionEvent event) throws IOException {
 
         SocketManager.sendMessage("sampletext", "o");
-        //FXMLLoader loader = new FXMLLoader(getClass().getResource("sample.fxml"));
-        //Parent logViewParent = loader.load();
-        //Scene logScene = new Scene(logViewParent);
         Stage window = (Stage)(logoutButton).getScene().getWindow();
         try {
             listOfActive.getItems().clear();
-            window.setScene(loginScene);
+            window.setScene(loginController.loginScene);
             window.setTitle("Talkie App");
         }
         catch (Exception e) {
@@ -72,7 +65,15 @@ public class mainViewController {
 
     public void switchToChatView(){
         ObservableList<String> chosen = listOfActive.getSelectionModel().getSelectedItems();
+        Stage window = (Stage)openChatButton.getScene().getWindow();
+        try {
+            window.setScene(chatViewController.chatViewScene);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
         System.out.println(chosen.get(0));
+
     }
 
 }
