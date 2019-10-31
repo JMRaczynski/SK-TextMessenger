@@ -22,9 +22,11 @@ public class mainViewController {
     //@FXML private Pane mainViewBackground;
     @FXML private ListView listOfActive;
     @FXML private Button newMessageButton;
-    @FXML private Button logoutButton;
+    @FXML public Button logoutButton;
     private ObservableList<String> userList;
-
+    public loginController loginController;
+    public Scene mainViewScene;
+    public Scene loginScene;
 
     public void showActiveUsers(String[] users) throws IOException
     {
@@ -43,17 +45,19 @@ public class mainViewController {
     public void logoutButtonHandler(ActionEvent event) throws IOException {
 
         SocketManager.sendMessage("sampletext", "o");
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("sample.fxml"));
-        Parent logViewParent = loader.load();
-        Scene logScene = new Scene(logViewParent);
+        //FXMLLoader loader = new FXMLLoader(getClass().getResource("sample.fxml"));
+        //Parent logViewParent = loader.load();
+        //Scene logScene = new Scene(logViewParent);
         Stage window = (Stage)(logoutButton).getScene().getWindow();
         try {
-            window.setScene(logScene);
+            listOfActive.getItems().clear();
+            window.setScene(loginScene);
+            window.setTitle("Talkie App");
         }
         catch (Exception e) {
             e.printStackTrace();
         }
-        window.show();
+        //window.show();
     }
 
     public void addUserToList(String username) {

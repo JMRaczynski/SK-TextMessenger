@@ -18,12 +18,31 @@ import java.net.*;
 
 public class Main extends Application {
 
+    private loginController loginController;
+    private mainViewController mainViewController;
     @Override
     public void start(Stage primaryStage) throws Exception{
+        //inicjalizacja i zapis sceny logowania
+        FXMLLoader loginLoader = new FXMLLoader(getClass().getResource("sample.fxml"));
+        Parent root = loginLoader.load();
+        loginController loginController = loginLoader.getController();
+        Scene logScene = new Scene(root);
 
-        Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
-        Scene scene = new Scene(root);
-        primaryStage.setScene(scene);
+        //inicjalizacja i zapis sceny mainview
+        FXMLLoader mainLoader = new FXMLLoader(getClass().getResource("mainView.fxml"));
+        Parent mainViewNode = mainLoader.load();
+        mainViewController mainController = mainLoader.getController();
+        Scene mainScene = new Scene(mainViewNode);
+        System.out.println(mainController.logoutButton.getText());
+
+        mainController.mainViewScene = mainScene;
+        mainController.loginScene = logScene;
+        loginController.mainViewScene = mainScene;
+        loginController.loginScene = logScene;
+        loginController.mainViewController = mainController;
+        mainController.loginController = loginController;
+
+        primaryStage.setScene(logScene);
         primaryStage.setTitle("TalkieApp");
         primaryStage.show();
 

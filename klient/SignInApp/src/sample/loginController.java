@@ -29,9 +29,9 @@ public class loginController /*implements Initializable*/ {
     @FXML private Button goNextButton;
     @FXML private TextField upperTextField;
     @FXML private TextField lowerTextField;
-    private mainViewController mainViewController;
-
-
+    public mainViewController mainViewController;
+    public Scene loginScene;
+    public Scene mainViewScene;
 
     public void connectToServer(ActionEvent event) throws IOException
     {
@@ -63,7 +63,7 @@ public class loginController /*implements Initializable*/ {
                                 @Override
                                 public void run() {
                                     try {
-                                        mainViewController = switchSceneToMainView();
+                                        switchSceneToMainView();
                                     } catch (IOException e) {
                                         e.printStackTrace();
                                     }
@@ -153,24 +153,18 @@ public class loginController /*implements Initializable*/ {
         lowerTextField.setText("hitler");
     }
 
-    public Scene loginView() throws IOException{
-        Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
-        Scene scene = new Scene(root);
-        return scene;
-    }
-
-    private mainViewController switchSceneToMainView() throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("mainView.fxml"));
-        Parent tableViewParent = loader.load();
-        Scene mainScene = new Scene(tableViewParent);
-        mainViewController controller = loader.getController();
+    private void switchSceneToMainView() throws IOException {
+        //FXMLLoader loader = new FXMLLoader(getClass().getResource("mainView.fxml"));
+        //Parent tableViewParent = loader.load();
+        //Scene mainScene = new Scene(tableViewParent);
+        //mainViewController controller = loader.getController();
 
         //This line gets the Stage information
         Stage window = (Stage)(loginButton).getScene().getWindow();
         window.setTitle("TalkieApp - " + upperTextField.getText());
         try {
 
-            window.setScene(mainScene);
+            window.setScene(mainViewScene);
 
         }
         catch (Exception e) {
@@ -179,7 +173,7 @@ public class loginController /*implements Initializable*/ {
         System.out.println("dd");
 
         window.show();
-        return controller;
+        //return controller;
     }
 
     /*public void initialize(URL url, ResourceBundle rb) {
