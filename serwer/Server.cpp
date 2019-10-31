@@ -140,7 +140,7 @@ void Server::threadRoutine(int connectionId) {
             connectionIdsToUserIndexesMap[userIndex] = -1;
             break;
         case 'm':
-            sendMessage(receivedMessageBuffer);
+            sendMessage(receivedMessageBuffer, userIndex);
             break;
         }
     }
@@ -265,9 +265,10 @@ void Server::sendListOfOnlineUsersToClient(int clientSocketDescriptor, std::stri
     }
 }
 
-void Server::sendMessage(char* message) {
-    char properMessage[BUFFER_SIZE];
+void Server::sendMessage(char* message, unsigned int userIndex) {
+    char properMessageBuffer[BUFFER_SIZE];
     std::string recipientNick = "";
+    std::string properMessage = "m " + userInformation[userIndex].username + " ";
     unsigned int iterator = 2;
     unsigned int properMessageIndex = 0;
     for (; iterator < strlen(message); iterator++) {
@@ -278,7 +279,7 @@ void Server::sendMessage(char* message) {
         else recipientNick += message[iterator];
     }
     for (; iterator < strlen(message); iterator++) {
-        properMessage[properMessageIndex++] = message[iterator];
+        properMessage += message[iterator];
     }
     unsigned int recipientIndex;
     for (unsigned int i = 0; i < userInformation.size(); i++) {
@@ -287,9 +288,10 @@ void Server::sendMessage(char* message) {
             break;
         }
     }
+    strcpy(properMessageBuffer, properMessage.c_str());
     int writeResult;
-    writeResult = write(userInformation[recipientIndex].socketDescriptor, properMessage, strlen(properMessage));
-    std::cout << properMessage << " <- przeslana wiadomosc\n";
+    writeResult = write(userInformation[recipientIndex].socketDescriptor, properMessageBuffer, properMessage.length());
+    std::cout << properMessageBuffer << " <- przeslana wiadomosc\n";
     std::cout << recipientNick << "<- nick odbiorcy\n";
     if (writeResult < 0) {
         //throw writingError;
