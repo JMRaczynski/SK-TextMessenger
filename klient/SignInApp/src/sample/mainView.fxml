@@ -17,7 +17,7 @@
          </content>
       </TitledPane>
       <Button fx:id="openChatButton" layoutX="105.0" layoutY="535.0" mnemonicParsing="false" onAction="#switchToChatView" prefHeight="39.0" prefWidth="187.0" text="Otwórz konwersację" />
-      <Button fx:id="newMessageButton" layoutX="25.0" layoutY="26.0" prefHeight="26.0" prefWidth="26.0">
+      <Button fx:id="newMessageButton" layoutX="25.0" layoutY="26.0" onAction="#newMessageButtonHandler" prefHeight="26.0" prefWidth="26.0">
          <graphic>
             <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -27,5 +27,10 @@
          </graphic>
       </Button>
       <Label fx:id="newMessageLabel" layoutX="77.0" layoutY="24.0" prefHeight="39.0" prefWidth="199.0" text="brak nowych wiadomości" textFill="WHITE" />
+      <TitledPane fx:id="incomingTitledPane" collapsible="false" layoutX="67.0" layoutY="24.0" prefWidth="204.0" text="Nowe wiadomości od:" visible="false">
+         <content>
+            <ListView fx:id="incomingListView" onMouseClicked="#incomingListHandler" prefHeight="200.0" prefWidth="200.0" />
+         </content>
+      </TitledPane>
    </children>
 </Pane>

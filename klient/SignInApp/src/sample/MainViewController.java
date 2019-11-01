@@ -11,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.stage.Stage;
 
@@ -18,17 +19,20 @@ public class MainViewController {
 
     //@FXML private Pane mainViewBackground;
     @FXML private ListView listOfActive;
+    @FXML private ListView incomingListView;
     @FXML private Button newMessageButton;
     @FXML private Button logoutButton;
     @FXML private Button openChatButton;
     @FXML private Label newMessageLabel;
+    @FXML private TitledPane incomingTitledPane;
+
     private ObservableList<String> userList;
     public LoginController loginController;
     public ChatViewController chatViewController;
     public Scene mainViewScene;
     public String messageRecipient = "";
     private String[] newMessageLabels = {"Brak nowych wiadomości", "1 nowa wiadomość", "2 nowe wiadomości", "2+ nowe wiadomości"};
-    private ArrayList<String> unreadMessagesAuthors;
+    private ObservableList<String> unreadMessagesAuthors;
     //public Scene loginScene;
 
     public void showActiveUsers(String[] users) throws IOException
@@ -60,6 +64,20 @@ public class MainViewController {
         //window.show();
     }
 
+    public void newMessageButtonHandler(ActionEvent event){
+        incomingListView.setItems(unreadMessagesAuthors);
+        incomingTitledPane.setVisible(true);
+        System.out.println("lista");
+    }
+
+    public void incomingListHandler(MouseEvent mouseEvent){
+        if (mouseEvent.isPrimaryButtonDown() && mouseEvent.getClickCount() == 2) {
+            System.out.println(incomingListView.getSelectionModel().getSelectedItem());
+        }
+        incomingTitledPane.setVisible(false);
+        switchToChatView();
+    }
+
     public void addUserToList(String username) {
         userList.add(username);
         listOfActive.getItems().add(userList.get(userList.size() - 1));
@@ -89,7 +107,7 @@ public class MainViewController {
     }
 
     public void initializeUnreadAuthorsList() {
-        unreadMessagesAuthors = new ArrayList<String>();
+        unreadMessagesAuthors =  FXCollections.<String>observableArrayList();
     }
 
     public boolean addAuthorToListOfUnreadAuthorsIfNeeded(String senderNickname) {
