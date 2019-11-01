@@ -16,6 +16,7 @@ import javafx.fxml.FXML;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 
@@ -24,7 +25,7 @@ public class MainViewController {
     //@FXML private Pane mainViewBackground;
     @FXML private ListView listOfActive;
     @FXML private ListView incomingListView;
-    @FXML private Button newMessageButton;
+    //@FXML private Button newMessageButton;
     @FXML private Button logoutButton;
     @FXML private Button openChatButton;
     @FXML private Label newMessageLabel;
@@ -37,7 +38,7 @@ public class MainViewController {
     public String messageRecipient = "";
     private String[] newMessageLabels = {"Brak nowych wiadomości", "1 nowa wiadomość", "2 nowe wiadomości", "2+ nowe wiadomości"};
     private ObservableList<String> unreadMessagesAuthors;
-    public Map<String, TextFlow> userChatViews;
+    public Map<String, VBox> userChatViews;
 
     public void showActiveUsers(String[] users) throws IOException
     {
@@ -89,19 +90,20 @@ public class MainViewController {
         userList.remove(username);
     }
 
-    public TextFlow createTextFlow(){
+    public VBox createVBox(){
         System.out.println("Nowy pane dla " + messageRecipient);
-        TextFlow userView = new TextFlow();
-        chatViewController.chatScrollPane.setContent(userView);
-        return userView;
+        VBox userBox = new VBox();
+        chatViewController.chatScrollPane.setContent(userBox);
+        return userBox;
     }
 
     public void switchToChatView(ListView list){
         ObservableList<String> chosen = list.getSelectionModel().getSelectedItems();
         messageRecipient = chosen.get(0);
         Stage window = (Stage)openChatButton.getScene().getWindow();
+        //userChatViews.putIfAbsent(messageRecipient, createVBox());
         if (!userChatViews.containsKey(messageRecipient)) {
-            userChatViews.put(messageRecipient, createTextFlow());
+            userChatViews.put(messageRecipient, createVBox());
         }
         try {
             window.setScene(chatViewController.chatViewScene);

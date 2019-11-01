@@ -23,7 +23,9 @@ public class LoginController /*implements Initializable*/ {
     @FXML private TextField upperTextField;
     @FXML private TextField lowerTextField;
     public MainViewController mainViewController;
+    public ChatViewController chatViewController;
     public Scene loginScene;
+    public String userNick;
     //public Scene mainViewScene;
 
 
@@ -54,6 +56,7 @@ public class LoginController /*implements Initializable*/ {
                             break;
                         case 'W': // witamy - poprawne zalogowanie
                             System.out.println("Jestem " + upperTextField.getText());
+                            userNick = upperTextField.getText();
                             Platform.runLater(new Runnable() {
                                 @Override
                                 public void run() {
@@ -109,6 +112,10 @@ public class LoginController /*implements Initializable*/ {
                                 }
                             }
                             System.out.println("Treść: " + properMessage);
+                            String finalProperMessage = properMessage;
+                            Platform.runLater(new Runnable() {
+                                public void run(){ chatViewController.showIncomingMessage(finalProperMessage, senderAndMessage[1]);}
+                            });
                             boolean wasAuthorAdded;
                             wasAuthorAdded = mainViewController.addAuthorToListOfUnreadAuthorsIfNeeded(senderAndMessage[1]);
                             if (wasAuthorAdded) {

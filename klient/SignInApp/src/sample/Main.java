@@ -43,9 +43,11 @@ public class Main extends Application {
         //loginController.mainViewScene = mainScene;
         loginController.loginScene = logScene;
         loginController.mainViewController = mainController;
+        loginController.chatViewController = chatController;
 
         chatController.chatViewScene = chScene;
         chatController.mainViewController = mainController;
+        chatController.loginController = loginController;
 
         primaryStage.setScene(logScene);
         primaryStage.setTitle("TalkieApp");
