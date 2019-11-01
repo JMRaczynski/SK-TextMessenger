@@ -1,7 +1,9 @@
 package sample;
 
 import java.io.IOException;
-import java.util.ArrayList;
+//import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.lang.Math;
 import java.lang.reflect.Array;
 
@@ -13,6 +15,8 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
+import javafx.scene.layout.Pane;
+import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 
 public class MainViewController {
@@ -33,7 +37,7 @@ public class MainViewController {
     public String messageRecipient = "";
     private String[] newMessageLabels = {"Brak nowych wiadomości", "1 nowa wiadomość", "2 nowe wiadomości", "2+ nowe wiadomości"};
     private ObservableList<String> unreadMessagesAuthors;
-    //public Scene loginScene;
+    public Map<String, TextFlow> userChatViews;
 
     public void showActiveUsers(String[] users) throws IOException
     {
@@ -44,9 +48,6 @@ public class MainViewController {
         listOfActive.setStyle("-fx-font-size: 18px;");
         listOfActive.getItems().addAll(userList);
         listOfActive.getSelectionModel().getSelectedItem();
-        newMessageButton.setBackground(Background.EMPTY);
-        newMessageButton.setStyle("-fx-background-image: url('http://icons.iconarchive.com/icons/google/noto-emoji-objects/512/62891-envelope-with-arrow-icon.png')");
-
     }
 
     public void logoutButtonHandler(ActionEvent event) throws IOException {
@@ -75,7 +76,7 @@ public class MainViewController {
             System.out.println(incomingListView.getSelectionModel().getSelectedItem());
         }
         incomingTitledPane.setVisible(false);
-        switchToChatView();
+        switchToChatView(incomingListView);
     }
 
     public void addUserToList(String username) {
@@ -88,16 +89,28 @@ public class MainViewController {
         userList.remove(username);
     }
 
-    public void switchToChatView(){
-        ObservableList<String> chosen = listOfActive.getSelectionModel().getSelectedItems();
+    public TextFlow createTextFlow(){
+        System.out.println("Nowy pane dla " + messageRecipient);
+        TextFlow userView = new TextFlow();
+        chatViewController.chatScrollPane.setContent(userView);
+        return userView;
+    }
+
+    public void switchToChatView(ListView list){
+        ObservableList<String> chosen = list.getSelectionModel().getSelectedItems();
+        messageRecipient = chosen.get(0);
         Stage window = (Stage)openChatButton.getScene().getWindow();
+        if (!userChatViews.containsKey(messageRecipient)) {
+            userChatViews.put(messageRecipient, createTextFlow());
+        }
         try {
             window.setScene(chatViewController.chatViewScene);
+            chatViewController.chatScrollPane.setContent(userChatViews.get(messageRecipient));
+            //userChatViews.get(messageRecipient).getParent().setDisable(false);
         }
         catch (Exception e){
             e.printStackTrace();
         }
-        messageRecipient = chosen.get(0);
         boolean wasAuthorRemoved;
         wasAuthorRemoved = removeAuthorFromListOfUnreadAuthorsIfNeeded(messageRecipient);
         if (wasAuthorRemoved) {
@@ -106,8 +119,16 @@ public class MainViewController {
         }
     }
 
+    public void openChatButtonHandler(ActionEvent event){
+        switchToChatView(listOfActive);
+    }
+
     public void initializeUnreadAuthorsList() {
         unreadMessagesAuthors =  FXCollections.<String>observableArrayList();
+    }
+
+    public void initializeUserMap() {
+        userChatViews = new HashMap<>();
     }
 
     public boolean addAuthorToListOfUnreadAuthorsIfNeeded(String senderNickname) {

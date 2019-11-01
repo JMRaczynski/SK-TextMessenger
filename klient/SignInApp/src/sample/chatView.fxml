@@ -4,17 +4,12 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.text.TextFlow?>
 
-<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.231" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.ChatViewController">
+<AnchorPane fx:id="chatBackgroundPane" minHeight="0.0" minWidth="0.0" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.231" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.ChatViewController">
    <children>
       <TextArea fx:id="writeTextArea" layoutX="14.0" layoutY="463.0" onKeyPressed="#sendOnEnter" prefHeight="101.0" prefWidth="499.0" wrapText="true" />
       <Button fx:id="sendButton" layoutX="528.0" layoutY="494.0" mnemonicParsing="false" onAction="#sendButtonHandler" text="-&gt;" />
       <Button fx:id="goBackButton" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#goBackButtonHandler" text="Powrót" />
-      <ScrollPane hbarPolicy="NEVER" layoutX="14.0" layoutY="62.0">
-         <content>
-            <TextFlow fx:id="textFlow" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="392.0" prefWidth="554.0" />
-         </content>
-      </ScrollPane>
+      <ScrollPane fx:id="chatScrollPane" layoutX="25.0" layoutY="64.0" prefHeight="390.0" prefWidth="550.0" />
    </children>
 </AnchorPane>

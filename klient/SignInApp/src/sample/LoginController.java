@@ -72,6 +72,7 @@ public class LoginController /*implements Initializable*/ {
                                 public void run() {
                                     try {
                                         mainViewController.showActiveUsers(users);
+                                        mainViewController.initializeUserMap();
                                         mainViewController.initializeUnreadAuthorsList();
                                     } catch (IOException e) {
                                         e.printStackTrace();
