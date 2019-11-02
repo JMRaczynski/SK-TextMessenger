@@ -48,11 +48,15 @@ public class ChatViewController {
     public void sendOnEnter(KeyEvent keyEvent){
         if (keyEvent.getCode() == KeyCode.ENTER) {
             String message = writeTextArea.getText();
+            System.out.println(message);
             if (!message.equals(null)) {
                 SocketManager.sendMessage(message, "m " + mainViewController.messageRecipient + " ");
                 //mainViewController.userChatViews.get(mainViewController.messageRecipient).getChildren().addAll(new Text(message));
-                mainViewController.userChatViews.get(mainViewController.messageRecipient).getChildren().addAll(new Label(
-                        loginController.userNick + ": " + message));
+                Label l = new Label(loginController.userNick + ": " + message);
+                l.getStyleClass().add("labelSend");
+                l.setMaxWidth(400);
+                l.setWrapText(true);
+                mainViewController.userChatViews.get(mainViewController.messageRecipient).getChildren().addAll(l);
             }
             writeTextArea.clear();
             writeTextArea.requestFocus();
@@ -79,7 +83,9 @@ public class ChatViewController {
         }
         //mainViewController.userChatViews.putIfAbsent(messageAuthor, mainViewController.createVBox());
         Label l = new Label(messageAuthor + ": " + message);
-        l.setAlignment(Pos.CENTER_RIGHT);
+        l.getStyleClass().add("labelReceive");
+        l.setMaxWidth(400);
+        l.setWrapText(true);
         mainViewController.userChatViews.get(messageAuthor).getChildren().addAll(l);
         //Text t = new Text(message + '\n');
         //t.setTextAlignment(TextAlignment.RIGHT);

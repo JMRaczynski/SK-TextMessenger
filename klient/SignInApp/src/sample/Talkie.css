@@ -2,3 +2,23 @@
     -fx-background-color: #585858;
     -fx-border-color: #86C1B9;
 }
+
+.pane{
+    -fx-background-color: #585858;
+    -fx-border-color: #86C1B9;
+}
+
+.labelSend{
+    -fx-background-color: #d7f6f6;
+    -fx-border-color: #585858;
+    -fx-text-fill: #000000;
+    -fx-min-height: 40;
+    -fx-page-information-alignment: RIGHT;
+}
+
+.labelReceive{
+    -fx-background-color: #bfbfbf;
+    -fx-border-color: #585858;
+    -fx-text-fill: #000000;
+    -fx-min-height: 40;
+}

@@ -93,7 +93,11 @@ public class MainViewController {
     public VBox createVBox(){
         System.out.println("Nowy pane dla " + messageRecipient);
         VBox userBox = new VBox();
+        userBox.setPrefWidth(chatViewController.chatScrollPane.getPrefWidth()-20);
+        userBox.setPrefHeight(chatViewController.chatScrollPane.getPrefHeight()-20);
+        userBox.getStyleClass().add("root");
         chatViewController.chatScrollPane.setContent(userBox);
+        chatViewController.chatScrollPane.vvalueProperty().bind(userBox.heightProperty());
         return userBox;
     }
 
