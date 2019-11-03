@@ -127,7 +127,12 @@ void Server::threadRoutine(int connectionId) {
             isUserLoggedInAlready = checkIfUserIsLoggedInAlready(userIndex);
             userInformation[userIndex].socketDescriptor = clientSocketDescriptor;
             connectionIdsToUserIndexesMap[connectionId] = userIndex;
-            sendResponseToClient(clientSocketDescriptor, areCredentialsCorrect);
+            if (isUserLoggedInAlready) {
+                sendUserAlreadyLoggedInMessage(clientSocketDescriptor);
+            }
+            else {
+                sendResponseToClient(clientSocketDescriptor, areCredentialsCorrect);
+            }
             if (areCredentialsCorrect && !isUserLoggedInAlready) {
                 listOfOnlineUsers = getListOfOnlineUsers(userIndex);
                 announceStateChange(userIndex, clientSocketDescriptor, "i ");
