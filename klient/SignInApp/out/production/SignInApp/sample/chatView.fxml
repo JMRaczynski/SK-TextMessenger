@@ -10,6 +10,6 @@
       <TextArea fx:id="writeTextArea" layoutX="14.0" layoutY="463.0" onKeyPressed="#sendOnEnter" prefHeight="101.0" prefWidth="499.0" wrapText="true" />
       <Button fx:id="sendButton" layoutX="528.0" layoutY="494.0" mnemonicParsing="false" onAction="#sendButtonHandler" text="-&gt;" />
       <Button fx:id="goBackButton" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#goBackButtonHandler" text="Powrót" />
-      <ScrollPane fx:id="chatScrollPane" layoutX="25.0" layoutY="64.0" prefHeight="390.0" prefWidth="550.0" styleClass="root" stylesheets="@Talkie.css"/>
+      <ScrollPane fx:id="chatScrollPane" hbarPolicy="NEVER" layoutX="25.0" layoutY="64.0" fitToWidth="true" prefHeight="390.0" prefWidth="550.0" styleClass="root" stylesheets="@Talkie.css" />
    </children>
 </AnchorPane>

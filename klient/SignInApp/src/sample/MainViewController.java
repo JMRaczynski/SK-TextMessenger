@@ -38,6 +38,7 @@ public class MainViewController {
     public String messageRecipient = "";
     private String[] newMessageLabels = {"Brak nowych wiadomości", "1 nowa wiadomość", "2 nowe wiadomości", "2+ nowe wiadomości"};
     private ObservableList<String> unreadMessagesAuthors;
+    private Boolean incomingVisibilityState = false;
     public Map<String, VBox> userChatViews;
 
     public void initializeUnreadAuthorsList() {
@@ -60,9 +61,17 @@ public class MainViewController {
     }
 
     public void newMessageButtonHandler(ActionEvent event){
-        incomingListView.setItems(unreadMessagesAuthors);
-        incomingTitledPane.setVisible(true);
-        System.out.println("lista");
+        if(!incomingVisibilityState) {
+            incomingListView.setItems(unreadMessagesAuthors);
+            incomingTitledPane.setVisible(true);
+            incomingVisibilityState = true;
+            System.out.println("lista");
+        }
+        else{
+            incomingTitledPane.setVisible(false);
+            incomingVisibilityState = false;
+            System.out.println("schowana lista");
+        }
     }
 
     public void incomingListHandler(MouseEvent mouseEvent){
