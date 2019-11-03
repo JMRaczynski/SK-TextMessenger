@@ -99,7 +99,7 @@ void Server::threadRoutine(int connectionId) {
     memset(receivedMessageBuffer, 0, BUFFER_SIZE);
     int readResult;
     unsigned int userIndex;
-    bool areCredentialsCorrect = false;
+    bool areCredentialsCorrect = false, isUserLoggedInAlready = false;
     //struct thread_data_t *threadData = (struct thread_data_t*) threadArgs;
     int clientSocketDescriptor = connectionSocketDescriptors[connectionId];
     std::cout << "w watku przed petla\n";
@@ -124,14 +124,18 @@ void Server::threadRoutine(int connectionId) {
             parseLoginAndPassword(readResult - 3, receivedMessageBuffer, &login, &password);
             areCredentialsCorrect = checkIfCredentialsAreCorrectAndAddUserDataIfHeIsNew(login, password);
             userIndex = getUserIndex(login);
+            isUserLoggedInAlready = checkIfUserIsLoggedInAlready(userIndex);
             userInformation[userIndex].socketDescriptor = clientSocketDescriptor;
             connectionIdsToUserIndexesMap[connectionId] = userIndex;
             sendResponseToClient(clientSocketDescriptor, areCredentialsCorrect);
-            if (areCredentialsCorrect) {
+            if (areCredentialsCorrect && !isUserLoggedInAlready) {
                 listOfOnlineUsers = getListOfOnlineUsers(userIndex);
                 announceStateChange(userIndex, clientSocketDescriptor, "i ");
                 sendListOfOnlineUsersToClient(clientSocketDescriptor, listOfOnlineUsers);
                 setUserAsOnline(userIndex);
+            }
+            if (isUserLoggedInAlready) {
+                sendUserAlreadyLoggedInMessage(clientSocketDescriptor);
             }
             break;
         case 'o':
@@ -194,6 +198,10 @@ unsigned int Server::getUserIndex(std::string login) {
             return i;
         }
     }
+}
+
+bool Server::checkIfUserIsLoggedInAlready(unsigned int userIndex) {
+    return userInformation[userIndex].isOnline;
 }
 
 void Server::sendResponseToClient(int clientSocketDescriptor, bool isLoginSuccessful) {
@@ -263,6 +271,15 @@ void Server::sendListOfOnlineUsersToClient(int clientSocketDescriptor, std::stri
         fprintf(stderr, "Błąd przy próbie zapisu wiadomosci..\n");
         exit(1);
     }
+}
+
+void Server::sendUserAlreadyLoggedInMessage(int clientSocketDescriptor) {
+    int writeResult;
+    char messageBuffer[30];
+    memset(messageBuffer, 0, 30);
+    strcpy(messageBuffer, "a useralreadyloggedinrip");
+    writeResult = write(clientSocketDescriptor, messageBuffer, strlen(messageBuffer));
+
 }
 
 void Server::sendMessage(char* message, unsigned int userIndex) {

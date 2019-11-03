@@ -38,8 +38,10 @@ class Server {
         void sendResponseToClient(int clientSocketDescriptor, bool isLoginSuccessful);
         bool checkIfCredentialsAreCorrectAndAddUserDataIfHeIsNew(std::string login, std::string password);
         unsigned int getUserIndex(std::string login);
+        bool checkIfUserIsLoggedInAlready(unsigned int userIndex);
         void setUserAsOffline(unsigned int userIndex);
         void setUserAsOnline(unsigned int userIndex);
+        void sendUserAlreadyLoggedInMessage(int clientSocketDescriptor);
         std::string getListOfOnlineUsers(unsigned int userIndex);
         void announceStateChange(unsigned int userIndex, int clientSocketDescriptor, std::string typeOfChange);
         void sendListOfOnlineUsersToClient(int clientSocketDescriptor, std::string list);
