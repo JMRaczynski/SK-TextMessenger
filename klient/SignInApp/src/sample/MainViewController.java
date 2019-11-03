@@ -1,7 +1,7 @@
 package sample;
 
+
 import java.io.IOException;
-//import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.lang.Math;
@@ -40,30 +40,23 @@ public class MainViewController {
     private ObservableList<String> unreadMessagesAuthors;
     public Map<String, VBox> userChatViews;
 
+    public void initializeUnreadAuthorsList() {
+        unreadMessagesAuthors =  FXCollections.<String>observableArrayList();
+    }
+
+    public void initializeUserMap() {
+        userChatViews = new HashMap<>();
+    }
+
     public void showActiveUsers(String[] users) throws IOException
     {
         userList = FXCollections.<String>observableArrayList();
         for (int i = 1; i < users.length; i++) {
             userList.add(users[i]);
         }
-        listOfActive.setStyle("-fx-font-size: 18px;");
+        //listOfActive.setStyle("-fx-font-size: 18px;");
         listOfActive.getItems().addAll(userList);
         listOfActive.getSelectionModel().getSelectedItem();
-    }
-
-    public void logoutButtonHandler(ActionEvent event) throws IOException {
-
-        SocketManager.sendMessage("sampletext", "o");
-        Stage window = (Stage)(logoutButton).getScene().getWindow();
-        try {
-            listOfActive.getItems().clear();
-            window.setScene(loginController.loginScene);
-            window.setTitle("Talkie App");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        //window.show();
     }
 
     public void newMessageButtonHandler(ActionEvent event){
@@ -80,25 +73,22 @@ public class MainViewController {
         switchToChatView(incomingListView);
     }
 
-    public void addUserToList(String username) {
-        userList.add(username);
-        listOfActive.getItems().add(userList.get(userList.size() - 1));
+    public void logoutButtonHandler(ActionEvent event) throws IOException {
+
+        SocketManager.sendMessage("sampletext", "o");
+        Stage window = (Stage)(logoutButton).getScene().getWindow();
+        try {
+            listOfActive.getItems().clear();
+            window.setScene(loginController.loginScene);
+            window.setTitle("Talkie App");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    public void removeUserFromList(String username) {
-        listOfActive.getItems().remove(username);
-        userList.remove(username);
-    }
-
-    public VBox createVBox(){
-        System.out.println("Nowy pane dla " + messageRecipient);
-        VBox userBox = new VBox();
-        userBox.setPrefWidth(chatViewController.chatScrollPane.getPrefWidth()-20);
-        userBox.setPrefHeight(chatViewController.chatScrollPane.getPrefHeight()-20);
-        userBox.getStyleClass().add("root");
-        chatViewController.chatScrollPane.setContent(userBox);
-        chatViewController.chatScrollPane.vvalueProperty().bind(userBox.heightProperty());
-        return userBox;
+    public void openChatButtonHandler(ActionEvent event){
+        switchToChatView(listOfActive);
     }
 
     public void switchToChatView(ListView list){
@@ -112,7 +102,6 @@ public class MainViewController {
         try {
             window.setScene(chatViewController.chatViewScene);
             chatViewController.chatScrollPane.setContent(userChatViews.get(messageRecipient));
-            //userChatViews.get(messageRecipient).getParent().setDisable(false);
         }
         catch (Exception e){
             e.printStackTrace();
@@ -125,17 +114,33 @@ public class MainViewController {
         }
     }
 
-    public void openChatButtonHandler(ActionEvent event){
-        switchToChatView(listOfActive);
+    public VBox createVBox(){
+        System.out.println("Nowy pane dla " + messageRecipient); // <- ten output jest bardzo mylacy <ROBI ZAMĘT JAK JA PIER****>, gdyz ta funkcja jest wywolywana tez przy otrzymaniu wiadomosci. Wtedy messageRecipient jest pusty, co pokazuje komunikat. Mimo to VBox tworzony jest poprawnie - dla nadawcy.
+        VBox userBox = new VBox();
+        userBox.setPrefWidth(chatViewController.chatScrollPane.getPrefWidth()-20);
+        //userBox.setPrefHeight(chatViewController.chatScrollPane.getPrefHeight()-20); <- to psuło scrollowanie
+        userBox.setMinHeight(chatViewController.chatScrollPane.getPrefHeight()-20);
+        userBox.getStyleClass().add("root");
+        userBox.setSpacing(10);
+        //chatViewController.chatScrollPane.setContent(userBox); <- to był błąd, powód j.w. PONADTO śmiem twierdzić, że usunięcie tej linii wcale nie psuje programu, gdyż w funkcji switchToChatView (jest ona wyżej, w tym kontrolerze) też ustawiasz ten pane jako content scrollpane'a
+        chatViewController.chatScrollPane.vvalueProperty().bind(userBox.heightProperty());
+        return userBox;
     }
 
-    public void initializeUnreadAuthorsList() {
-        unreadMessagesAuthors =  FXCollections.<String>observableArrayList();
+    public void updateNewMessagesLabel() {
+        newMessageLabel.setText(newMessageLabels[Math.min(3, unreadMessagesAuthors.size())]);
     }
 
-    public void initializeUserMap() {
-        userChatViews = new HashMap<>();
+    public void addUserToListOfActiveUsers(String username) {
+        userList.add(username);
+        listOfActive.getItems().add(userList.get(userList.size() - 1));
     }
+
+    public void removeUserFromListOfActiveUsers(String username) {
+        listOfActive.getItems().remove(username);
+        userList.remove(username);
+    }
+
 
     public boolean addAuthorToListOfUnreadAuthorsIfNeeded(String senderNickname) {
         if (!messageRecipient.equals(senderNickname) && !unreadMessagesAuthors.contains(senderNickname)) {
@@ -151,9 +156,5 @@ public class MainViewController {
             return true;
         }
         return false;
-    }
-
-    public void updateNewMessagesLabel() {
-        newMessageLabel.setText(newMessageLabels[Math.min(3, unreadMessagesAuthors.size())]);
     }
 }

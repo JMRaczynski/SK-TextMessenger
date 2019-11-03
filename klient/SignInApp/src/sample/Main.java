@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.ScrollPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.event.EventHandler;
@@ -48,6 +49,8 @@ public class Main extends Application {
         chatController.chatViewScene = chScene;
         chatController.mainViewController = mainController;
         chatController.loginController = loginController;
+
+        chatController.chatScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
 
         primaryStage.setScene(logScene);
         primaryStage.setTitle("TalkieApp");

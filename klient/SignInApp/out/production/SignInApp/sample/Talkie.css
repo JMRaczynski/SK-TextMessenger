@@ -1,6 +1,8 @@
 .root{
     -fx-background-color: #585858;
     -fx-border-color: #86C1B9;
+    -fx-font-family: Calibri;
+    -fx-font-size: 14px;
 }
 
 .pane{
@@ -8,17 +10,22 @@
     -fx-border-color: #86C1B9;
 }
 
-.labelSend{
-    -fx-background-color: #d7f6f6;
-    -fx-border-color: #585858;
-    -fx-text-fill: #000000;
-    -fx-min-height: 40;
-    -fx-page-information-alignment: RIGHT;
+
+
+.labelsend{
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: #FFFFFF;
+    -fx-text-alignment: CENTER;
+    -fx-background-radius: 20 20 20 20;
+    -fx-min-height: 30px;
+    -fx-padding: 10;
 }
 
-.labelReceive{
-    -fx-background-color: #bfbfbf;
-    -fx-border-color: #585858;
-    -fx-text-fill: #000000;
-    -fx-min-height: 40;
+.labelreceive{
+    -fx-background-color: #0078FF;
+    -fx-text-fill: #FFFFFF;
+    -fx-text-alignment: CENTER;
+    -fx-background-radius: 20 20 20 20;
+    -fx-min-height: 30px;
+    -fx-padding: 10;
 }

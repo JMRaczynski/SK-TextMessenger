@@ -88,7 +88,7 @@ public class LoginController /*implements Initializable*/ {
                             Platform.runLater(new Runnable() {
                                 @Override
                                 public void run() {
-                                    mainViewController.addUserToList(splitMessage[1]);
+                                    mainViewController.addUserToListOfActiveUsers(splitMessage[1]);
                                 }
                             });
                             break;
@@ -97,7 +97,7 @@ public class LoginController /*implements Initializable*/ {
                             Platform.runLater(new Runnable() {
                                 @Override
                                 public void run() {
-                                    mainViewController.removeUserFromList(splitReceived[1]);
+                                    mainViewController.removeUserFromListOfActiveUsers(splitReceived[1]);
                                 }
                             });
                             break;
@@ -138,27 +138,6 @@ public class LoginController /*implements Initializable*/ {
 
     }
 
-    public void sendCredentialsAndShowFeedback(ActionEvent event) throws IOException
-    {
-
-        String login = upperTextField.getText();
-        String password = lowerTextField.getText();
-        String serverAnswer;
-        SocketManager.sendMessage(login + ' ' + password + '\n', "l");
-        //serverAnswer = SocketManager.receiveMessage();
-        //System.out.println(serverAnswer);
-        //System.out.println(serverAnswer.length());
-
-        //if (serverAnswer.equals("Witamy")) {
-            //System.out.println(serverAnswer);
-        //}
-        //else
-        //{
-            //warningLabel.setVisible(true);
-        //}
-
-    }
-
     private void changeIpInputWindowToLoginWindow() {
         ipPortIntroductionLabel.setVisible(false);
         loginIntroductionLabel.setVisible(true);
@@ -177,6 +156,12 @@ public class LoginController /*implements Initializable*/ {
         lowerTextField.setText("hitler");
     }
 
+    public void sendCredentialsToServer(ActionEvent event) {
+        String login = upperTextField.getText();
+        String password = lowerTextField.getText();
+        SocketManager.sendMessage(login + ' ' + password + '\n', "l");
+    }
+
     private void switchSceneToMainView() throws IOException {
         //This line gets the Stage information
         Stage window = (Stage)(loginButton).getScene().getWindow();
@@ -187,9 +172,6 @@ public class LoginController /*implements Initializable*/ {
         catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("dd");
-        //window.show();
-        //return controller;
     }
 
     /*public void initialize(URL url, ResourceBundle rb) {

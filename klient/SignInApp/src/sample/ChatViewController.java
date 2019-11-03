@@ -1,8 +1,13 @@
 package sample;
 
+import java.lang.Math;
+
 import javafx.fxml.FXML;
+import javafx.geometry.HPos;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.layout.HBox;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -35,14 +40,14 @@ public class ChatViewController {
 
 
     public void sendButtonHandler(ActionEvent event){
-        String message = writeTextArea.getText();
+        /*String message = writeTextArea.getText();
         //Text t = new Text(message);
         if (!message.equals(null)) {
             //mainViewController.userChatViews.get(mainViewController.messageRecipient).getChildren().addAll(new Text(message + "\n"));
             mainViewController.userChatViews.get(mainViewController.messageRecipient).getChildren().addAll(new Label(
                     loginController.userNick + ": " + message));
         }
-        writeTextArea.clear();
+        writeTextArea.clear();*/
     }
 
     public void sendOnEnter(KeyEvent keyEvent){
@@ -51,16 +56,33 @@ public class ChatViewController {
             System.out.println(message);
             if (!message.equals(null)) {
                 SocketManager.sendMessage(message, "m " + mainViewController.messageRecipient + " ");
-                //mainViewController.userChatViews.get(mainViewController.messageRecipient).getChildren().addAll(new Text(message));
                 Label l = new Label(loginController.userNick + ": " + message);
-                l.getStyleClass().add("labelSend");
-                l.setMaxWidth(400);
+                l.getStyleClass().add("labelsend");
                 l.setWrapText(true);
-                mainViewController.userChatViews.get(mainViewController.messageRecipient).getChildren().addAll(l);
+                HBox hBox=new HBox();
+                hBox.setMaxWidth(250);
+                hBox.getChildren().add(l);
+                mainViewController.userChatViews.get(mainViewController.messageRecipient).getChildren().add(hBox);
             }
             writeTextArea.clear();
             writeTextArea.requestFocus();
+            keyEvent.consume();
         }
+    }
+
+    public void showIncomingMessage(String message, String messageAuthor){
+        if (!mainViewController.userChatViews.containsKey(messageAuthor)) {
+            mainViewController.userChatViews.put(messageAuthor, mainViewController.createVBox());
+        }
+        //mainViewController.userChatViews.putIfAbsent(messageAuthor, mainViewController.createVBox());
+        Label l = new Label(messageAuthor + ": " + message);
+        l.getStyleClass().add("labelreceive");
+        l.setMaxWidth(250);
+        l.setWrapText(true);
+        HBox hBox=new HBox();
+        hBox.setAlignment(Pos.BASELINE_RIGHT);
+        hBox.getChildren().add(l);
+        mainViewController.userChatViews.get(messageAuthor).getChildren().add(hBox);
     }
 
     public void goBackButtonHandler() throws IOException {
@@ -75,21 +97,6 @@ public class ChatViewController {
         }
         mainViewController.messageRecipient = "";
         System.out.println("gb");
-    }
-
-    public void showIncomingMessage(String message, String messageAuthor){
-        if (!mainViewController.userChatViews.containsKey(messageAuthor)) {
-            mainViewController.userChatViews.put(messageAuthor, mainViewController.createVBox());
-        }
-        //mainViewController.userChatViews.putIfAbsent(messageAuthor, mainViewController.createVBox());
-        Label l = new Label(messageAuthor + ": " + message);
-        l.getStyleClass().add("labelReceive");
-        l.setMaxWidth(400);
-        l.setWrapText(true);
-        mainViewController.userChatViews.get(messageAuthor).getChildren().addAll(l);
-        //Text t = new Text(message + '\n');
-        //t.setTextAlignment(TextAlignment.RIGHT);
-        //mainViewController.userChatViews.get(messageAuthor).getChildren().addAll(t);
     }
 
 }

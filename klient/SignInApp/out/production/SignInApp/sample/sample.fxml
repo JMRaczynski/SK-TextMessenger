@@ -14,7 +14,7 @@
       <Label fx:id="lowerLabel" layoutX="62.0" layoutY="209.0" text="Port" textFill="WHITE" />
       <Label fx:id="ipPortIntroductionLabel" layoutX="38.0" layoutY="68.0" text="Witaj! Podaj adres serwera i numer portu" textAlignment="CENTER" textFill="WHITE" />
       <Label fx:id="warningLabel" layoutX="41.0" layoutY="271.0" text="Dane nieprawidłowe! Spróbuj ponownie" textFill="#d0d0d0" visible="false" />
-      <Button fx:id="loginButton" layoutX="157.0" layoutY="309.0" mnemonicParsing="false" onAction="#sendCredentialsAndShowFeedback" style="-fx-background-color: #86C1B9;" text="Zaloguj" textFill="WHITE" visible="false" wrapText="true" />
+      <Button fx:id="loginButton" layoutX="157.0" layoutY="309.0" mnemonicParsing="false" onAction="#sendCredentialsToServer" style="-fx-background-color: #86C1B9;" text="Zaloguj" textFill="WHITE" visible="false" wrapText="true" />
       <Label fx:id="loginIntroductionLabel" layoutX="103.0" layoutY="68.0" text="Zaloguj się by rozpocząć" textAlignment="CENTER" textFill="WHITE" visible="false" />
    </children>
 </Pane>
