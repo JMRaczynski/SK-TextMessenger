@@ -31,24 +31,13 @@ public class ChatViewController {
     //@FXML private Button sendButton;
     @FXML private Button goBackButton;
     @FXML private TextArea writeTextArea;
+    @FXML private Label logoutLabel;
     @FXML public AnchorPane chatBackgroundPane;
     @FXML public ScrollPane chatScrollPane;
 
     public MainViewController mainViewController;
     public LoginController loginController;
     public Scene chatViewScene;
-
-
-    public void sendButtonHandler(ActionEvent event){
-        /*String message = writeTextArea.getText();
-        //Text t = new Text(message);
-        if (!message.equals(null)) {
-            //mainViewController.userChatViews.get(mainViewController.messageRecipient).getChildren().addAll(new Text(message + "\n"));
-            mainViewController.userChatViews.get(mainViewController.messageRecipient).getChildren().addAll(new Label(
-                    loginController.userNick + ": " + message));
-        }
-        writeTextArea.clear();*/
-    }
 
     public void sendOnEnter(KeyEvent keyEvent){
         if (keyEvent.getCode() == KeyCode.ENTER) {
@@ -99,4 +88,13 @@ public class ChatViewController {
         System.out.println("gb");
     }
 
+    public void switchTextAreaForLoggedOutWarning() {
+        logoutLabel.setVisible(true);
+        writeTextArea.setVisible(false);
+    }
+
+    public void switchLoggedOutWarningForTextArea() {
+        logoutLabel.setVisible(false);
+        writeTextArea.setVisible(true);
+    }
 }

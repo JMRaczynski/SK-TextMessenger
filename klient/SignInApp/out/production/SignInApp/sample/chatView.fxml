@@ -4,12 +4,13 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.Label?>
 
 <AnchorPane fx:id="chatBackgroundPane" minWidth="0.0" prefHeight="600.0" prefWidth="600.0" styleClass="root" stylesheets="@Talkie.css" xmlns="http://javafx.com/javafx/8.0.231" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.ChatViewController">
    <children>
-      <TextArea fx:id="writeTextArea" layoutX="14.0" layoutY="463.0" onKeyPressed="#sendOnEnter" prefHeight="101.0" prefWidth="499.0" wrapText="true" />
-      <Button fx:id="sendButton" layoutX="528.0" layoutY="494.0" mnemonicParsing="false" onAction="#sendButtonHandler" text="-&gt;" />
-      <Button fx:id="goBackButton" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#goBackButtonHandler" text="Powrót" />
-      <ScrollPane fx:id="chatScrollPane" hbarPolicy="NEVER" layoutX="25.0" layoutY="64.0" fitToWidth="true" prefHeight="390.0" prefWidth="550.0" styleClass="root" stylesheets="@Talkie.css" />
+      <TextArea fx:id="writeTextArea" layoutX="25.0" layoutY="463.0" onKeyPressed="#sendOnEnter" prefHeight="101.0" prefWidth="550.0" wrapText="true" />
+      <Label fx:id="logoutLabel" layoutX="25.0" layoutY="514.0" text="Uzytkownik przeszedł w tryb offline." textFill="#d0d0d0" visible="false" />
+      <Button fx:id="goBackButton" layoutX="25.0" layoutY="14.0" mnemonicParsing="false" onAction="#goBackButtonHandler" text="Powrót" />
+      <ScrollPane fx:id="chatScrollPane" hbarPolicy="NEVER" layoutX="25.0" layoutY="64.0" prefHeight="390.0" prefWidth="550.0" styleClass="root" stylesheets="@Talkie.css" />
    </children>
 </AnchorPane>
