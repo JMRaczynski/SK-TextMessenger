@@ -7,7 +7,7 @@
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" styleClass="root" stylesheets="@Talkie.css" xmlns="http://javafx.com/javafx/8.0.231" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.LoginController">
    <children>
-      <TextField fx:id="upperTextField" layoutX="133.0" layoutY="143.0" text="192.168.0.125" />
+      <TextField fx:id="upperTextField" layoutX="133.0" layoutY="143.0" text="83.20.137.216" />
       <TextField fx:id="lowerTextField" layoutX="133.0" layoutY="203.0" text="1235" />
       <Button fx:id="goNextButton" layoutX="137.0" layoutY="309.0" mnemonicParsing="false" onAction="#connectToServer" style="-fx-background-color: #86C1B9;" text="Przejdź dalej" textFill="WHITE" wrapText="true" />
       <Label fx:id="upperLabel" layoutX="62.0" layoutY="149.0" text="Adres" textFill="WHITE" />

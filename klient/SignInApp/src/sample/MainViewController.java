@@ -111,6 +111,7 @@ public class MainViewController {
         try {
             window.setScene(chatViewController.chatViewScene);
             chatViewController.chatScrollPane.setContent(userChatViews.get(messageRecipient));
+            chatViewController.recipientWindowNameLabel.setText("Rozmowa z " + messageRecipient);
         }
         catch (Exception e){
             e.printStackTrace();
@@ -129,7 +130,7 @@ public class MainViewController {
         userBox.setPrefWidth(chatViewController.chatScrollPane.getPrefWidth()-20);
         //userBox.setPrefHeight(chatViewController.chatScrollPane.getPrefHeight()-20); <- to psuło scrollowanie
         userBox.setMinHeight(chatViewController.chatScrollPane.getPrefHeight()-20);
-        userBox.getStyleClass().add("root");
+        userBox.getStyleClass().add("vbox");
         userBox.setSpacing(10);
         //chatViewController.chatScrollPane.setContent(userBox); <- to był błąd, powód j.w. PONADTO śmiem twierdzić, że usunięcie tej linii wcale nie psuje programu, gdyż w funkcji switchToChatView (jest ona wyżej, w tym kontrolerze) też ustawiasz ten pane jako content scrollpane'a
         chatViewController.chatScrollPane.vvalueProperty().bind(userBox.heightProperty());

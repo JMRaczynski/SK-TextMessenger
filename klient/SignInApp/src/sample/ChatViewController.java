@@ -34,6 +34,7 @@ public class ChatViewController {
     @FXML private Label logoutLabel;
     @FXML public AnchorPane chatBackgroundPane;
     @FXML public ScrollPane chatScrollPane;
+    @FXML public Label recipientWindowNameLabel;
 
     public MainViewController mainViewController;
     public LoginController loginController;
@@ -45,7 +46,7 @@ public class ChatViewController {
             System.out.println(message);
             if (!message.equals(null)) {
                 SocketManager.sendMessage(message, "m " + mainViewController.messageRecipient + " ");
-                Label l = new Label(loginController.userNick + ": " + message);
+                Label l = new Label("Ty: " + message);
                 l.getStyleClass().add("labelsend");
                 l.setWrapText(true);
                 HBox hBox=new HBox();

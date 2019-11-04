@@ -6,14 +6,19 @@
 }
 
 .pane{
-    -fx-background-color: #585858;
-    -fx-border-color: #86C1B9;
+    -fx-background-color: #4f4f4f;
+    //-fx-border-color: #86C1B9;
+}
+
+.vbox{
+    -fx-background-color: #343434;
+    //-fx-border-color: #86C1B9;
 }
 
 
-
 .labelsend{
-    -fx-background-color: #4CAF50;
+    //-fx-background-color: #4CAF50;
+    -fx-background-color: #3dabb3;
     -fx-text-fill: #FFFFFF;
     -fx-text-alignment: CENTER;
     -fx-background-radius: 20 20 20 20;
@@ -22,10 +27,17 @@
 }
 
 .labelreceive{
-    -fx-background-color: #0078FF;
+    //-fx-background-color: #0078FF;
+    -fx-background-color: #585858;
     -fx-text-fill: #FFFFFF;
     -fx-text-alignment: CENTER;
     -fx-background-radius: 20 20 20 20;
     -fx-min-height: 30px;
+    -fx-padding: 10;
+}
+
+.labelcontact{
+    -fx-background-color: #585858;
+    -fx-text-fill: #FFFFFF;
     -fx-padding: 10;
 }
