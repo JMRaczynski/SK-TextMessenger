@@ -105,9 +105,17 @@ public class LoginController /*implements Initializable*/ {
                                 @Override
                                 public void run() {
                                     mainViewController.addUserToListOfActiveUsers(splitMessage[1]);
-                                    chatViewController.switchLoggedOutWarningForTextArea();
+
                                 }
                             });
+                            if (splitMessage[1].equals(mainViewController.messageRecipient)) {
+                                Platform.runLater(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        chatViewController.switchLoggedOutWarningForTextArea();
+                                    }
+                                });
+                            }
                             break;
                         case 'o': // powiadomienie, ze uzytkownik opuscil system
                             String[] splitReceived = received.split(" ");

@@ -78,8 +78,9 @@ public class MainViewController {
         if (mouseEvent.isPrimaryButtonDown() && mouseEvent.getClickCount() == 2) {
             System.out.println(incomingListView.getSelectionModel().getSelectedItem());
         }
-        incomingTitledPane.setVisible(false);
         switchToChatView(incomingListView);
+        incomingTitledPane.setVisible(false);
+        incomingVisibilityState = false;
     }
 
     public void logoutButtonHandler(ActionEvent event) throws IOException {
@@ -100,7 +101,10 @@ public class MainViewController {
         switchToChatView(listOfActive);
     }
 
-    public void switchToChatView(ListView list){
+    public void switchToChatView(ListView list) {
+        if (list.getSelectionModel().getSelectedItems().size() == 0) {
+            return;
+        }
         ObservableList<String> chosen = list.getSelectionModel().getSelectedItems();
         messageRecipient = chosen.get(0);
         Stage window = (Stage)openChatButton.getScene().getWindow();
@@ -115,6 +119,12 @@ public class MainViewController {
         }
         catch (Exception e){
             e.printStackTrace();
+        }
+        if (userList.contains(messageRecipient)) {
+            chatViewController.switchLoggedOutWarningForTextArea();
+        }
+        else {
+            chatViewController.switchTextAreaForLoggedOutWarning();
         }
         boolean wasAuthorRemoved;
         wasAuthorRemoved = removeAuthorFromListOfUnreadAuthorsIfNeeded(messageRecipient);
