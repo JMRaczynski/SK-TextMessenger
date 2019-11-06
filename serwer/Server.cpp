@@ -125,7 +125,6 @@ void Server::threadRoutine(int connectionId) {
             areCredentialsCorrect = checkIfCredentialsAreCorrectAndAddUserDataIfHeIsNew(login, password);
             userIndex = getUserIndex(login);
             isUserLoggedInAlready = checkIfUserIsLoggedInAlready(userIndex);
-            userInformation[userIndex].socketDescriptor = clientSocketDescriptor;
             connectionIdsToUserIndexesMap[connectionId] = userIndex;
             if (isUserLoggedInAlready) {
                 sendUserAlreadyLoggedInMessage(clientSocketDescriptor);
@@ -134,6 +133,7 @@ void Server::threadRoutine(int connectionId) {
                 sendResponseToClient(clientSocketDescriptor, areCredentialsCorrect);
             }
             if (areCredentialsCorrect && !isUserLoggedInAlready) {
+                userInformation[userIndex].socketDescriptor = clientSocketDescriptor;
                 listOfOnlineUsers = getListOfOnlineUsers(userIndex);
                 announceStateChange(userIndex, clientSocketDescriptor, "i ");
                 sendListOfOnlineUsersToClient(clientSocketDescriptor, listOfOnlineUsers);
@@ -146,6 +146,7 @@ void Server::threadRoutine(int connectionId) {
         case 'o':
             announceStateChange(userIndex, clientSocketDescriptor, "o ");
             setUserAsOffline(userIndex);
+            userInformation[userIndex].socketDescriptor = -1;
             connectionIdsToUserIndexesMap[userIndex] = -1;
             break;
         case 'm':
@@ -157,10 +158,10 @@ void Server::threadRoutine(int connectionId) {
     if (userInformation[userIndex].isOnline) {
         announceStateChange(userIndex, clientSocketDescriptor, "o ");
         setUserAsOffline(userIndex);
+        userInformation[userIndex].socketDescriptor = -1;
         connectionIdsToUserIndexesMap[userIndex] = -1;
     }
     isIdBusy[connectionId] = false;
-    userInformation[userIndex].socketDescriptor = -1;
     //delete threadData;
     std::cout << "klient rozlacza sie\n";
     //pthread_exit(NULL);
