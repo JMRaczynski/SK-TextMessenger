@@ -42,7 +42,7 @@ public class SocketManager {
             receivedMessage += temp;
             messageLength += partialLength;
         }
-        return receivedMessage;
+        return receivedMessage.substring(0, receivedMessage.length() - 2);
     }
 
     static public void closeSocket() throws IOException {

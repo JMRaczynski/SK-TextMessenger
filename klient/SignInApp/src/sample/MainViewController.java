@@ -52,10 +52,9 @@ public class MainViewController {
     public void showActiveUsers(String[] users) throws IOException
     {
         userList = FXCollections.<String>observableArrayList();
-        for (int i = 1; i < users.length; i++) {
+        for (int i = 2; i < users.length; i++) {
             userList.add(users[i]);
         }
-        //listOfActive.setStyle("-fx-font-size: 18px;");
         listOfActive.getItems().addAll(userList);
         listOfActive.getSelectionModel().getSelectedItem();
     }
