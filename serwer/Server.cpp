@@ -115,7 +115,7 @@ void Server::threadRoutine(int connectionId) {
             fprintf(stderr, "Błąd przy próbie odczytu wiadomosci..\n");
             exit(1);
         }
-        if (receivedMessageBuffer[0] == 'q') {
+        if (receivedMessageBuffer[0] == 'q' || receivedMessageBuffer[0] == '0') {
             std::cout << "no to klient chyba poszedl...\n";
             
         }
@@ -213,10 +213,10 @@ bool Server::checkIfUserIsLoggedInAlready(unsigned int userIndex) {
 void Server::sendResponseToClient(int clientSocketDescriptor, bool isLoginSuccessful) {
     int writeResult = 0;
     if (isLoginSuccessful) {
-        writeResult = write(clientSocketDescriptor, SUCCESSFUL_LOGIN_MESSAGE, 8);
+        writeResult = write(clientSocketDescriptor, SUCCESSFUL_LOGIN_MESSAGE, 10);
     }
     else {
-        writeResult = write(clientSocketDescriptor, BAD_PASSWORD_MESSAGE, 45);
+        writeResult = write(clientSocketDescriptor, BAD_PASSWORD_MESSAGE, 48);
     }
     std::cout << writeResult << " <- Dlugosc odeslanej wiadomosci\n";
     if (writeResult < 0) {
@@ -248,7 +248,8 @@ std::string Server::getListOfOnlineUsers(unsigned int userIndex) {
 
 void Server::announceStateChange(unsigned int myIndex, int mySocketDescriptor, std::string changeType) {
     int writeResult;
-    std::string message = changeType + userInformation[myIndex].username + "  ";
+    int messageLength = changeType.length() + userInformation[myIndex].username.length() + 3;
+    std::string message = changeType + std::to_string(messageLength) + " " + userInformation[myIndex].username + "  ";
     char messageBuffer[BUFFER_SIZE];
     strcpy(messageBuffer, message.c_str());
     for (int i = 0; i < MAX_NUMBER_OF_CONCURRENT_CLIENTS; i++) {
@@ -266,6 +267,8 @@ void Server::announceStateChange(unsigned int myIndex, int mySocketDescriptor, s
 
 void Server::sendListOfOnlineUsersToClient(int clientSocketDescriptor, std::string list) {
     int writeResult = 0;
+    std::string messageLength = std::to_string(list.length());
+    list = list.substr(0, 2) + messageLength + " " + list.substr(2, list.length() - 2);
     char messageBuffer[list.length() + 1];
     strcpy(messageBuffer, list.c_str());
     std::cout << messageBuffer << "<- lista ludzi online\n";
@@ -283,7 +286,7 @@ void Server::sendUserAlreadyLoggedInMessage(int clientSocketDescriptor) {
     int writeResult;
     char messageBuffer[30];
     memset(messageBuffer, 0, 30);
-    strcpy(messageBuffer, "a useralreadyloggedinrip");
+    strcpy(messageBuffer, "a 26 useralreadyloggedinrip");
     writeResult = write(clientSocketDescriptor, messageBuffer, strlen(messageBuffer));
 
 }
@@ -311,6 +314,8 @@ void Server::sendMessage(char* message, unsigned int userIndex) {
             break;
         }
     }
+    std::string messageLength = std::to_string(properMessage.length());
+    properMessage = properMessage.substr(0, 2) + messageLength + " " + properMessage.substr(2, properMessage.length() - 2);
     strcpy(properMessageBuffer, properMessage.c_str());
     int writeResult;
     writeResult = write(userInformation[recipientIndex].socketDescriptor, properMessageBuffer, properMessage.length());

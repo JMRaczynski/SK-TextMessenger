@@ -1,19 +1,12 @@
 #include "User.h"
 #define MAX_NUMBER_OF_CONCURRENT_CLIENTS 100
-#define BUFFER_SIZE 1000
-#define BAD_PASSWORD_MESSAGE "Podales niewlasciwe haslo. Sprobuj ponownie"
-#define SUCCESSFUL_LOGIN_MESSAGE "Witamy"
-#define LOGOUT_MESSAGE "Klient sie wylogowal"
+#define BUFFER_SIZE 10000
+#define BAD_PASSWORD_MESSAGE "P 46 odales niewlasciwe haslo. Sprobuj ponownie"
+#define SUCCESSFUL_LOGIN_MESSAGE "W 9 itamy"
+#define LOGOUT_MESSAGE "K 23 lient sie wylogowal"
 
 class Server {
     public:
-        //struct thread_data_t {
-        //    int connectionId;
-        //};
-
-        //static const int MAX_NUMBER_OF_CONCURRENT_CLIENTS = 100;
-        //static const std::string BAD_PASSWORD_MESSAGE = "Podales niewlasciwe haslo. Sprobuj ponownie";
-        //static const std::string SUCCESSFUL_LOGIN_MESSAGE = "Witamy";
         struct sockaddr_in address;
         int socketDescriptor;
         int connectionSocketDescriptors[MAX_NUMBER_OF_CONCURRENT_CLIENTS];
