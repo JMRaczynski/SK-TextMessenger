@@ -104,11 +104,11 @@ public class LoginController /*implements Initializable*/ {
                             Platform.runLater(new Runnable() {
                                 @Override
                                 public void run() {
-                                    mainViewController.addUserToListOfActiveUsers(splitMessage[1]);
+                                    mainViewController.addUserToListOfActiveUsers(splitMessage[2]);
 
                                 }
                             });
-                            if (splitMessage[1].equals(mainViewController.messageRecipient)) {
+                            if (splitMessage[2].equals(mainViewController.messageRecipient)) {
                                 Platform.runLater(new Runnable() {
                                     @Override
                                     public void run() {
@@ -122,10 +122,10 @@ public class LoginController /*implements Initializable*/ {
                             Platform.runLater(new Runnable() {
                                 @Override
                                 public void run() {
-                                    mainViewController.removeUserFromListOfActiveUsers(splitReceived[1]);
+                                    mainViewController.removeUserFromListOfActiveUsers(splitReceived[2]);
                                 }
                             });
-                            if (splitReceived[1].equals(mainViewController.messageRecipient)) {
+                            if (splitReceived[2].equals(mainViewController.messageRecipient)) {
                                 Platform.runLater(new Runnable() {
                                     @Override
                                     public void run() {
@@ -137,8 +137,8 @@ public class LoginController /*implements Initializable*/ {
                         case 'm': // nowa wiadomosc
                             String[] senderAndMessage = received.split(" ");
                             String properMessage = "";
-                            System.out.println("Od: " + senderAndMessage[1]);
-                            for (int i = 2; i < senderAndMessage.length; i++) {
+                            System.out.println("Od: " + senderAndMessage[2]);
+                            for (int i = 3; i < senderAndMessage.length; i++) {
                                 properMessage = properMessage + senderAndMessage[i];
                                 if (i != senderAndMessage.length - 1) {
                                     properMessage += " ";
@@ -149,8 +149,8 @@ public class LoginController /*implements Initializable*/ {
                             Platform.runLater(new Runnable() {
                                 public void run(){
                                     boolean wasAuthorAdded;
-                                    chatViewController.showIncomingMessage(finalProperMessage, senderAndMessage[1]);
-                                    wasAuthorAdded = mainViewController.addAuthorToListOfUnreadAuthorsIfNeeded(senderAndMessage[1]);
+                                    chatViewController.showIncomingMessage(finalProperMessage, senderAndMessage[2]);
+                                    wasAuthorAdded = mainViewController.addAuthorToListOfUnreadAuthorsIfNeeded(senderAndMessage[2]);
                                     if (wasAuthorAdded) {
                                         mainViewController.updateNewMessagesLabel();
                                     }
