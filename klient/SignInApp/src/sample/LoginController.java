@@ -1,6 +1,7 @@
 package sample;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -46,117 +47,123 @@ public class LoginController /*implements Initializable*/ {
 
         Task<Integer> readMessagesFromServer = new Task<Integer>() {
             @Override protected Integer call() throws Exception {
+                ArrayList<String> incomingMessages;
                 String received;
                 while (true) {
-                    received = SocketManager.receiveMessage();
-                    System.out.println("Wiadomosc: " + received);
-                    switch(received.charAt(0)) {
-                        case 'P': // blędne hasło
-                            Platform.runLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    warningLabel.setText("Dane nieprawidłowe! Spróbuj ponownie");
-                                    warningLabel.setVisible(true);
-                                }
-                            });
-                            break;
-                        case 'a': // logowanie na już zalogowanego użytkownika
-                            Platform.runLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    warningLabel.setText("Użytkownik jest już zalogowany. Spróbuj ponownie");
-                                    warningLabel.setVisible(true);
-                                }
-                            });
-                            break;
-                        case 'W': // witamy - poprawne zalogowanie
-                            System.out.println("Jestem " + upperTextField.getText());
-                            userNick = upperTextField.getText();
-                            Platform.runLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        switchSceneToMainView();
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
+                    incomingMessages = SocketManager.receiveMessage();
+                    while (incomingMessages.size() > 0) {
+                        System.out.println(incomingMessages.get(0));
+                        received = incomingMessages.get(0);
+                        incomingMessages.remove(0);
+                        System.out.println("Wiadomosc: " + received);
+                        switch(received.charAt(0)) {
+                            case 'P': // blędne hasło
+                                Platform.runLater(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        warningLabel.setText("Dane nieprawidłowe! Spróbuj ponownie");
+                                        warningLabel.setVisible(true);
                                     }
-                                }
-                            });
-                            break;
-                        case 'l': // przeslanie listy uzytkownikow po poprawnym zalogowaniu
-                            String[] users = received.split(" ");
-                            Platform.runLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        mainViewController.showActiveUsers(users);
-                                        mainViewController.initializeUserMap();
-                                        mainViewController.initializeUnreadAuthorsList();
-                                        mainViewController.updateNewMessagesLabel();
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
+                                });
+                                break;
+                            case 'a': // logowanie na już zalogowanego użytkownika
+                                Platform.runLater(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        warningLabel.setText("Użytkownik jest już zalogowany. Spróbuj ponownie");
+                                        warningLabel.setVisible(true);
                                     }
-                                }
-                            });
-                            break;
-                        case 'i': // powiadomienie o nowym uzytkowniku offline
-                            String[] splitMessage = received.split(" ");
-                            Platform.runLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mainViewController.addUserToListOfActiveUsers(splitMessage[2]);
+                                });
+                                break;
+                            case 'W': // witamy - poprawne zalogowanie
+                                System.out.println("Jestem " + upperTextField.getText());
+                                userNick = upperTextField.getText();
+                                Platform.runLater(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        try {
+                                            switchSceneToMainView();
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                });
+                                break;
+                            case 'l': // przeslanie listy uzytkownikow po poprawnym zalogowaniu
+                                String[] users = received.split(" ");
+                                Platform.runLater(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        try {
+                                            mainViewController.showActiveUsers(users);
+                                            mainViewController.initializeUserMap();
+                                            mainViewController.initializeUnreadAuthorsList();
+                                            mainViewController.updateNewMessagesLabel();
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                });
+                                break;
+                            case 'i': // powiadomienie o nowym uzytkowniku offline
+                                String[] splitMessage = received.split(" ");
+                                Platform.runLater(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mainViewController.addUserToListOfActiveUsers(splitMessage[2]);
 
+                                    }
+                                });
+                                if (splitMessage[2].equals(mainViewController.messageRecipient)) {
+                                    Platform.runLater(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            chatViewController.switchLoggedOutWarningForTextArea();
+                                        }
+                                    });
                                 }
-                            });
-                            if (splitMessage[2].equals(mainViewController.messageRecipient)) {
+                                break;
+                            case 'o': // powiadomienie, ze uzytkownik opuscil system
+                                String[] splitReceived = received.split(" ");
                                 Platform.runLater(new Runnable() {
                                     @Override
                                     public void run() {
-                                        chatViewController.switchLoggedOutWarningForTextArea();
+                                        mainViewController.removeUserFromListOfActiveUsers(splitReceived[2]);
                                     }
                                 });
-                            }
-                            break;
-                        case 'o': // powiadomienie, ze uzytkownik opuscil system
-                            String[] splitReceived = received.split(" ");
-                            Platform.runLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mainViewController.removeUserFromListOfActiveUsers(splitReceived[2]);
+                                if (splitReceived[2].equals(mainViewController.messageRecipient)) {
+                                    Platform.runLater(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            chatViewController.switchTextAreaForLoggedOutWarning();
+                                        }
+                                    });
                                 }
-                            });
-                            if (splitReceived[2].equals(mainViewController.messageRecipient)) {
+                                break;
+                            case 'm': // nowa wiadomosc
+                                String[] senderAndMessage = received.split(" ");
+                                String properMessage = "";
+                                System.out.println("Od: " + senderAndMessage[2]);
+                                for (int i = 3; i < senderAndMessage.length; i++) {
+                                    properMessage = properMessage + senderAndMessage[i];
+                                    if (i != senderAndMessage.length - 1) {
+                                        properMessage += " ";
+                                    }
+                                }
+                                System.out.println("Treść: " + properMessage);
+                                String finalProperMessage = properMessage;
                                 Platform.runLater(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        chatViewController.switchTextAreaForLoggedOutWarning();
+                                    public void run(){
+                                        boolean wasAuthorAdded;
+                                        chatViewController.showIncomingMessage(finalProperMessage, senderAndMessage[2]);
+                                        wasAuthorAdded = mainViewController.addAuthorToListOfUnreadAuthorsIfNeeded(senderAndMessage[2]);
+                                        if (wasAuthorAdded) {
+                                            mainViewController.updateNewMessagesLabel();
+                                        }
                                     }
                                 });
-                            }
-                            break;
-                        case 'm': // nowa wiadomosc
-                            String[] senderAndMessage = received.split(" ");
-                            String properMessage = "";
-                            System.out.println("Od: " + senderAndMessage[2]);
-                            for (int i = 3; i < senderAndMessage.length; i++) {
-                                properMessage = properMessage + senderAndMessage[i];
-                                if (i != senderAndMessage.length - 1) {
-                                    properMessage += " ";
-                                }
-                            }
-                            System.out.println("Treść: " + properMessage);
-                            String finalProperMessage = properMessage;
-                            Platform.runLater(new Runnable() {
-                                public void run(){
-                                    boolean wasAuthorAdded;
-                                    chatViewController.showIncomingMessage(finalProperMessage, senderAndMessage[2]);
-                                    wasAuthorAdded = mainViewController.addAuthorToListOfUnreadAuthorsIfNeeded(senderAndMessage[2]);
-                                    if (wasAuthorAdded) {
-                                        mainViewController.updateNewMessagesLabel();
-                                    }
-                                }
-                            });
-                            break;
+                                break;
+                        }
                     }
                 }
             }

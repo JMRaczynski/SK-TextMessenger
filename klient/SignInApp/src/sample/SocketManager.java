@@ -26,23 +26,49 @@ public class SocketManager {
         outputStream.println(message);
     }
 
-    static public String receiveMessage() throws IOException {
+    static public ArrayList<String> receiveMessage() throws IOException {
         byte[] buffer = new byte[10000];
         int expectedLength;
         int partialLength = inputStream.read(buffer);
         int messageLength = partialLength;
+        ArrayList<String> receivedMessages = new ArrayList<>(0);
         String receivedMessage = new String(buffer, 0, partialLength);
         String temp;
         String[] words = receivedMessage.split(" ");
-        expectedLength = Integer.parseInt(words[1]) - words[1].length();
-        while (expectedLength > messageLength) {
-            Arrays.fill(buffer, (byte) 0);
-            partialLength = inputStream.read(buffer);
-            temp = new String(buffer, 0, partialLength);
-            receivedMessage += temp;
-            messageLength += partialLength;
+        String[] messages;
+        String lastMessage;
+        expectedLength = Integer.parseInt(words[1]) + words[1].length();
+        System.out.println(expectedLength + " " + messageLength);
+        while (expectedLength != messageLength) {
+            //System.out.println("F");
+            if (expectedLength > messageLength) {  // przychodzi ADO zamiast ADOLF
+                Arrays.fill(buffer, (byte) 0);
+                partialLength = inputStream.read(buffer);
+                temp = new String(buffer, 0, partialLength);
+                receivedMessage += temp;
+                messageLength += partialLength;
+                if (expectedLength == messageLength) {
+                    receivedMessages.add(receivedMessage);
+                }
+            }
+            if (expectedLength < messageLength) { // przychodzi ADOLF HITLER zamiast ADOLF
+                messages = receivedMessage.split("\n");
+                for (int i = 0; i < messages.length - 1; i++) {
+                    receivedMessages.add(messages[i].substring(0, messages[i].length() - 2));
+                }
+                lastMessage = messages[messages.length - 1];
+                expectedLength = Integer.parseInt(lastMessage.split(" ")[1]) - lastMessage.split(" ")[1].length();
+                if (lastMessage.length() == expectedLength) {
+                    receivedMessages.add(lastMessage.substring(0, lastMessage.length() - 2));
+                }
+                else {
+                    receivedMessage = lastMessage;
+                    messageLength = lastMessage.length();
+                }
+            }
         }
-        return receivedMessage.substring(0, receivedMessage.length() - 2);
+        if (receivedMessages.size() == 0) receivedMessages.add(receivedMessage);
+        return receivedMessages;
     }
 
     static public void closeSocket() throws IOException {
