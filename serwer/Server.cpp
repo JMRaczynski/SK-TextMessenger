@@ -267,7 +267,7 @@ void Server::announceStateChange(unsigned int myIndex, int mySocketDescriptor, s
 
 void Server::sendListOfOnlineUsersToClient(int clientSocketDescriptor, std::string list) {
     int writeResult = 0;
-    std::string messageLength = std::to_string(list.length());
+    std::string messageLength = std::to_string(list.length() + 1);
     list = list.substr(0, 2) + messageLength + " " + list.substr(2, list.length() - 2);
     char messageBuffer[list.length() + 1];
     strcpy(messageBuffer, list.c_str());
@@ -286,7 +286,7 @@ void Server::sendUserAlreadyLoggedInMessage(int clientSocketDescriptor) {
     int writeResult;
     char messageBuffer[30];
     memset(messageBuffer, 0, 30);
-    strcpy(messageBuffer, "a 26 useralreadyloggedinrip");
+    strcpy(messageBuffer, "a 25 useralreadyloggedinrip");
     writeResult = write(clientSocketDescriptor, messageBuffer, strlen(messageBuffer));
 
 }
@@ -314,7 +314,7 @@ void Server::sendMessage(char* message, unsigned int userIndex) {
             break;
         }
     }
-    std::string messageLength = std::to_string(properMessage.length());
+    std::string messageLength = std::to_string(properMessage.length() + 1);
     properMessage = properMessage.substr(0, 2) + messageLength + " " + properMessage.substr(2, properMessage.length() - 2);
     strcpy(properMessageBuffer, properMessage.c_str());
     int writeResult;
