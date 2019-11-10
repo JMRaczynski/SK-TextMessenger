@@ -20,9 +20,14 @@ public class SocketManager {
     }
 
     static public void sendMessage(String message, String prefix) {
-        //int messageLength = message.length() + prefix.length() + 1;
-        //message = prefix + messageLength + " " + message;
-        message = prefix + message;
+        if (prefix.charAt(0) == 'm') {
+            message = prefix + message;
+        }
+        else {
+            int messageLength = message.length() + prefix.length() + 4;
+            message = prefix + " " + messageLength + " " + message;
+        }
+        System.out.println("wyslana wiadomosc: " + message);
         outputStream.println(message);
     }
 
