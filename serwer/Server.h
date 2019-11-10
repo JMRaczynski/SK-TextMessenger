@@ -39,4 +39,6 @@ class Server {
         void announceStateChange(unsigned int userIndex, int clientSocketDescriptor, std::string typeOfChange);
         void sendListOfOnlineUsersToClient(int clientSocketDescriptor, std::string list);
         void sendMessage(char* messageBuffer, unsigned int userIndex);
+        void removeMessageLength(std::string *message);
+        std::vector<std::string> split(std::string stringToSplit, std::string delimiter);
 };
