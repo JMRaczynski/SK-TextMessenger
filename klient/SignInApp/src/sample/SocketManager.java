@@ -24,7 +24,7 @@ public class SocketManager {
             message = prefix + message;
         }
         else {
-            int messageLength = message.length() + prefix.length() + 4;
+            int messageLength = message.getBytes().length + prefix.length() + 4;
             message = prefix + " " + messageLength + " " + message;
         }
         System.out.println("wyslana wiadomosc: " + message);

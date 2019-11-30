@@ -45,7 +45,7 @@ public class ChatViewController {
             String message = writeTextArea.getText();
             System.out.println(message);
             if (!message.equals(null)) {
-                int mLength = message.length() + mainViewController.messageRecipient.length() + 6;
+                int mLength = message.getBytes().length + mainViewController.messageRecipient.getBytes().length + 6;
                 SocketManager.sendMessage(message, "m " + mLength + " " + mainViewController.messageRecipient + " ");
                 Label l = new Label("Ty: " + message);
                 l.getStyleClass().add("labelsend");
