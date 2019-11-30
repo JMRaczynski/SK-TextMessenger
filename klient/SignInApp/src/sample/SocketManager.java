@@ -45,8 +45,7 @@ public class SocketManager {
         expectedLength = Integer.parseInt(words[1]) + words[1].length();
         System.out.println(expectedLength + " " + messageLength);
         while (expectedLength != messageLength) {
-            //System.out.println("F");
-            if (expectedLength > messageLength) {  // przychodzi ADO zamiast ADOLF
+            if (expectedLength > messageLength) {  // przychodzi fragment wiadomosci
                 Arrays.fill(buffer, (byte) 0);
                 partialLength = inputStream.read(buffer);
                 temp = new String(buffer, 0, partialLength);
@@ -56,7 +55,7 @@ public class SocketManager {
                     receivedMessages.add(receivedMessage);
                 }
             }
-            if (expectedLength < messageLength) { // przychodzi ADOLF HITLER zamiast ADOLF
+            if (expectedLength < messageLength) { // przychodza sklejone wiadomosci
                 messages = receivedMessage.split("\n");
                 for (int i = 0; i < messages.length - 1; i++) {
                     receivedMessages.add(messages[i].substring(0, messages[i].length() - 2));

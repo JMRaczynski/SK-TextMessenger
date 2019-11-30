@@ -1,7 +1,6 @@
 package sample;
 
 import javafx.application.Application;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -10,11 +9,10 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.event.EventHandler;
 
+import java.io.IOException;
+
 public class Main extends Application {
 
-    //private LoginController loginController;
-    //private MainViewController mainViewController;
-    //private ChatViewController chatViewController;
     @Override
     public void start(Stage primaryStage) throws Exception{
         //inicjalizacja sceny logowania
@@ -37,11 +35,9 @@ public class Main extends Application {
 
 
         mainController.mainViewScene = mainScene;
-        //mainController.loginScene = logScene;
         mainController.loginController = loginController;
         mainController.chatViewController = chatController;
 
-        //loginController.mainViewScene = mainScene;
         loginController.loginScene = logScene;
         loginController.mainViewController = mainController;
         loginController.chatViewController = chatController;
@@ -58,7 +54,15 @@ public class Main extends Application {
 
         EventHandler quitHandler = new EventHandler<WindowEvent>() {
             public void handle(WindowEvent we) {
-                if (SocketManager.checkIfClientIsConnectedToServer()) SocketManager.sendMessage("quit", "q");
+                if (SocketManager.checkIfClientIsConnectedToServer()) {
+                    SocketManager.sendMessage("quit", "q");
+                    try {
+                        SocketManager.closeSocket();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        System.out.println("Problem z zamknięciem gniazda");
+                    }
+                }
             }
         };
 

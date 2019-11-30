@@ -27,7 +27,6 @@ public class LoginController /*implements Initializable*/ {
     public ChatViewController chatViewController;
     public Scene loginScene;
     public String userNick;
-    //public Scene mainViewScene;
 
 
     public void connectToServer(ActionEvent event) throws IOException
@@ -210,10 +209,5 @@ public class LoginController /*implements Initializable*/ {
             e.printStackTrace();
         }
     }
-
-    /*public void initialize(URL url, ResourceBundle rb) {
-
-    }*/
-
 }
 

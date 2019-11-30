@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.lang.Math;
-import java.lang.reflect.Array;
 
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
@@ -14,18 +13,13 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 
 public class MainViewController {
 
-    //@FXML private Pane mainViewBackground;
     @FXML private ListView listOfActive;
     @FXML private ListView incomingListView;
-    //@FXML private Button newMessageButton;
     @FXML private Button logoutButton;
     @FXML private Button openChatButton;
     @FXML private Label newMessageLabel;
@@ -107,7 +101,6 @@ public class MainViewController {
         ObservableList<String> chosen = list.getSelectionModel().getSelectedItems();
         messageRecipient = chosen.get(0);
         Stage window = (Stage)openChatButton.getScene().getWindow();
-        //userChatViews.putIfAbsent(messageRecipient, createVBox());
         if (!userChatViews.containsKey(messageRecipient)) {
             userChatViews.put(messageRecipient, createVBox());
         }
@@ -137,7 +130,6 @@ public class MainViewController {
         System.out.println("Nowy pane dla " + messageRecipient); // <- ten output jest bardzo mylacy <ROBI ZAMĘT JAK JA PIER****>, gdyz ta funkcja jest wywolywana tez przy otrzymaniu wiadomosci. Wtedy messageRecipient jest pusty, co pokazuje komunikat. Mimo to VBox tworzony jest poprawnie - dla nadawcy.
         VBox userBox = new VBox();
         userBox.setPrefWidth(chatViewController.chatScrollPane.getPrefWidth()-20);
-        //userBox.setPrefHeight(chatViewController.chatScrollPane.getPrefHeight()-20); <- to psuło scrollowanie
         userBox.setMinHeight(chatViewController.chatScrollPane.getPrefHeight()-20);
         userBox.getStyleClass().add("vbox");
         userBox.setSpacing(10);
