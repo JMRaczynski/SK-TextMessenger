@@ -17,6 +17,10 @@
 
 #include "Server.h"
 
+std::mutex Server::logoutMutex;
+std::mutex Server::writeMutex;
+std::mutex Server::userInfoMutex;
+
 int main() {
     int assignedId;
     Server myServer = Server(1235);

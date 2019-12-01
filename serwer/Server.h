@@ -1,4 +1,5 @@
 #include "User.h"
+#include <mutex>
 #define MAX_NUMBER_OF_CONCURRENT_CLIENTS 100
 #define BUFFER_SIZE 10000
 #define BAD_PASSWORD_MESSAGE "P 46 odales niewlasciwe haslo. Sprobuj ponownie"
@@ -7,24 +8,26 @@
 
 class Server {
     public:
-        struct sockaddr_in address;
-        int socketDescriptor;
-        int connectionSocketDescriptors[MAX_NUMBER_OF_CONCURRENT_CLIENTS];
-        int connectionIdsToUserIndexesMap[MAX_NUMBER_OF_CONCURRENT_CLIENTS];
-        bool isIdBusy[MAX_NUMBER_OF_CONCURRENT_CLIENTS];
+        static std::mutex logoutMutex;
+        static std::mutex writeMutex;
+        static std::mutex userInfoMutex;
 
         Server(uint16_t portNumber);
+        void initialize(int connectionQueueSize);
         int acceptConnection();
         void threadRoutine(int connectionId);
-        void handleConnection(int connectionId);
-        void initialize(int connectionQueueSize);
         virtual ~Server();
 
     protected:
 
     private:
-        char reuseAddressValue;
         std::vector<User> userInformation;
+        struct sockaddr_in address;
+        int socketDescriptor;
+        
+        int connectionSocketDescriptors[MAX_NUMBER_OF_CONCURRENT_CLIENTS];
+        int connectionIdsToUserIndexesMap[MAX_NUMBER_OF_CONCURRENT_CLIENTS];
+        bool isIdBusy[MAX_NUMBER_OF_CONCURRENT_CLIENTS];
 
         int assignConnectionId();
         void parseLoginAndPassword(int numberOfReadCharacters, char *message, std::string *login, std::string *password);

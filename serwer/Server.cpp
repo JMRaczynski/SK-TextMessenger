@@ -9,6 +9,7 @@
 #include <arpa/inet.h>
 #include <thread>
 #include "Server.h"
+#include <mutex>
 
 Server::Server(uint16_t portNumber) {
     memset(&address, 0, sizeof(struct sockaddr));
@@ -16,7 +17,7 @@ Server::Server(uint16_t portNumber) {
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = htonl(INADDR_ANY);
     address.sin_port = htons(portNumber);
-    reuseAddressValue = 1;
+    //reuseAddressValue = 1;
     for (int i = 0; i < MAX_NUMBER_OF_CONCURRENT_CLIENTS; i++) {
         connectionIdsToUserIndexesMap[i] = -1;
     } 
@@ -31,7 +32,7 @@ void Server::initialize(int connectionQueueSize) {
         fprintf(stderr, "Błąd przy próbie utworzenia gniazda..\n");
         exit(1);
     }
-    setsockopt(socketDescriptor, SOL_SOCKET, SO_REUSEADDR, (char *)&reuseAddressValue, sizeof(reuseAddressValue));
+    //setsockopt(socketDescriptor, SOL_SOCKET, SO_REUSEADDR, (char *)&reuseAddressValue, sizeof(reuseAddressValue));
     bindResult = bind(socketDescriptor, (struct sockaddr*) &address, sizeof(struct sockaddr));
     if (bindResult < 0) {
         fprintf(stderr, "Błąd przy próbie przypisania adresu do gniazda..\n");
@@ -60,12 +61,15 @@ int Server::acceptConnection() {
 }
 
 int Server::assignConnectionId() {
+    logoutMutex.lock();
     for (int i = 0; i < MAX_NUMBER_OF_CONCURRENT_CLIENTS; i++) {
         if (!isIdBusy[i]) {
             isIdBusy[i] = true;
+            logoutMutex.unlock();
             return i;
         }
     }
+    logoutMutex.unlock();
     std::cout << "FAIL\n";
     return -1;
 }
@@ -87,7 +91,7 @@ void Server::threadRoutine(int connectionId) {
     bool areCredentialsCorrect = false, isUserLoggedInAlready = false;
     int clientSocketDescriptor = connectionSocketDescriptors[connectionId];
     std::cout << "w watku przed petla\n";
-    while (receivedMessageBuffer[0] != 'q') {
+    while (receivedMessageBuffer[0] != 'q' && receivedMessageBuffer[0] != '0') {
 
         gluedMessages.clear();
         memset(receivedMessageBuffer, 0, BUFFER_SIZE);
@@ -95,7 +99,7 @@ void Server::threadRoutine(int connectionId) {
         readResult = read(clientSocketDescriptor, receivedMessageBuffer, BUFFER_SIZE);
         if (readResult < 0) {
             fprintf(stderr, "Błąd przy próbie odczytu wiadomosci..\n");
-            exit(1);
+            exit(1); //break;
         }
         std::cout << readResult << " <- Ilosc odczytanych bajtow\n";
         std::cout << "Odczytana wiadomosc -> " << receivedMessageBuffer;
@@ -147,8 +151,20 @@ void Server::threadRoutine(int connectionId) {
             incomingMessages.erase(incomingMessages.begin());
             
 
-            if (receivedMessageBuffer[0] == 'q' || receivedMessageBuffer[0] == '0') {
+            if (receivedMessageBuffer[0] == 'q' || receivedMessageBuffer[0] == '0' || receivedMessageBuffer[0] == 'o') {
+                userInfoMutex.lock();
+                announceStateChange(userIndex, clientSocketDescriptor, "o ");
+                userInfoMutex.unlock();
+                logoutMutex.lock();
+                setUserAsOffline(userIndex);
+                userInformation[userIndex].socketDescriptor = -1;
+                connectionIdsToUserIndexesMap[userIndex] = -1;
                 std::cout << "no to klient chyba poszedl...\n";
+                if (receivedMessageBuffer[0] != 'o') {
+                    isIdBusy[connectionId] = false;
+                    std::cout << "klient rozlacza sie\n";
+                }
+                logoutMutex.unlock();
                 break;
             }
             switch (receivedMessageBuffer[0]) {
@@ -157,7 +173,6 @@ void Server::threadRoutine(int connectionId) {
                 areCredentialsCorrect = checkIfCredentialsAreCorrectAndAddUserDataIfHeIsNew(login, password);
                 userIndex = getUserIndex(login);
                 isUserLoggedInAlready = checkIfUserIsLoggedInAlready(userIndex);
-                connectionIdsToUserIndexesMap[connectionId] = userIndex;
                 if (isUserLoggedInAlready) {
                     sendUserAlreadyLoggedInMessage(clientSocketDescriptor);
                 }
@@ -165,21 +180,18 @@ void Server::threadRoutine(int connectionId) {
                     sendResponseToClient(clientSocketDescriptor, areCredentialsCorrect);
                 }
                 if (areCredentialsCorrect && !isUserLoggedInAlready) {
+                    connectionIdsToUserIndexesMap[connectionId] = userIndex;
+                    userInfoMutex.lock();
                     userInformation[userIndex].socketDescriptor = clientSocketDescriptor;
                     listOfOnlineUsers = getListOfOnlineUsers(userIndex);
                     announceStateChange(userIndex, clientSocketDescriptor, "i ");
+                    userInfoMutex.unlock();
                     sendListOfOnlineUsersToClient(clientSocketDescriptor, listOfOnlineUsers);
                     setUserAsOnline(userIndex);
                 }
                 if (isUserLoggedInAlready) {
                     sendUserAlreadyLoggedInMessage(clientSocketDescriptor);
                 }
-                break;
-            case 'o':
-                announceStateChange(userIndex, clientSocketDescriptor, "o ");
-                setUserAsOffline(userIndex);
-                userInformation[userIndex].socketDescriptor = -1;
-                connectionIdsToUserIndexesMap[userIndex] = -1;
                 break;
             case 'm':
                 sendMessage(receivedMessageBuffer, userIndex);
@@ -188,14 +200,13 @@ void Server::threadRoutine(int connectionId) {
         }
     }
 
-    if (userInformation[userIndex].isOnline) {
+    /*if (userInformation[userIndex].isOnline) {
         announceStateChange(userIndex, clientSocketDescriptor, "o ");
         setUserAsOffline(userIndex);
         userInformation[userIndex].socketDescriptor = -1;
         connectionIdsToUserIndexesMap[userIndex] = -1;
-    }
-    isIdBusy[connectionId] = false;
-    std::cout << "klient rozlacza sie\n";
+    }*/
+    //isIdBusy[connectionId] = false;
 }
 
 void Server::parseLoginAndPassword(int numberOfReadCharacters, char *message, std::string *login, std::string *password) {
@@ -282,6 +293,7 @@ void Server::announceStateChange(unsigned int myIndex, int mySocketDescriptor, s
     std::string message = changeType + std::to_string(messageLength) + " " + userInformation[myIndex].username + "  ";
     char messageBuffer[BUFFER_SIZE];
     strcpy(messageBuffer, message.c_str());
+    logoutMutex.lock();
     for (int i = 0; i < MAX_NUMBER_OF_CONCURRENT_CLIENTS; i++) {
         //std::cout << connectionIdsToUserIndexesMap[i] << "<- mapa id polaczen na indeksy uzytkownikow\n";
         if (isIdBusy[i] && connectionIdsToUserIndexesMap[i] != -1 && connectionSocketDescriptors[i] != mySocketDescriptor && userInformation[connectionIdsToUserIndexesMap[i]].isOnline) {
@@ -292,6 +304,7 @@ void Server::announceStateChange(unsigned int myIndex, int mySocketDescriptor, s
             }
         }
     }
+    logoutMutex.unlock();
 }
 
 void Server::sendListOfOnlineUsersToClient(int clientSocketDescriptor, std::string list) {
@@ -302,7 +315,9 @@ void Server::sendListOfOnlineUsersToClient(int clientSocketDescriptor, std::stri
     strcpy(messageBuffer, list.c_str());
     std::cout << messageBuffer << "<- lista ludzi online\n";
     std::cout << strlen(messageBuffer) << "<- dlugosc listy\n";
+    writeMutex.lock();
     writeResult = write(clientSocketDescriptor, messageBuffer, strlen(messageBuffer));
+    writeMutex.unlock();
     std::cout << messageBuffer << " <- Dlugosc odeslanej listy\n";
     if (writeResult < 0) {
         fprintf(stderr, "Błąd przy próbie zapisu wiadomosci..\n");
@@ -315,8 +330,9 @@ void Server::sendUserAlreadyLoggedInMessage(int clientSocketDescriptor) {
     char messageBuffer[30];
     memset(messageBuffer, 0, 30);
     strcpy(messageBuffer, "a 25 useralreadyloggedinrip");
+    writeMutex.lock();
     writeResult = write(clientSocketDescriptor, messageBuffer, strlen(messageBuffer));
-
+    writeMutex.unlock();
 }
 
 void Server::sendMessage(char* message, unsigned int userIndex) {
@@ -346,7 +362,9 @@ void Server::sendMessage(char* message, unsigned int userIndex) {
     properMessage = properMessage.substr(0, 2) + messageLength + " " + properMessage.substr(2, properMessage.length() - 3);
     strcpy(properMessageBuffer, properMessage.c_str());
     int writeResult;
+    writeMutex.lock();
     writeResult = write(userInformation[recipientIndex].socketDescriptor, properMessageBuffer, strlen(properMessageBuffer) - 1);
+    writeMutex.unlock();
     std::cout << properMessageBuffer << " <- przeslana wiadomosc\n";
     std::cout << recipientNick << "<- nick odbiorcy\n";
     if (writeResult < 0) {
