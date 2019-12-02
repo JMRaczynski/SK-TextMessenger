@@ -200,6 +200,7 @@ public class LoginController /*implements Initializable*/ {
 
     private void switchSceneToMainView() throws IOException {
         //This line gets the Stage information
+        warningLabel.setVisible(false);
         Stage window = (Stage)(loginButton).getScene().getWindow();
         window.setTitle("TalkieApp - " + upperTextField.getText());
         try {
