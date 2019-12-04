@@ -15,6 +15,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
+
         //inicjalizacja sceny logowania
         FXMLLoader loginLoader = new FXMLLoader(getClass().getResource("sample.fxml"));
         Parent root = loginLoader.load();
@@ -33,7 +34,7 @@ public class Main extends Application {
         ChatViewController chatController = chatLoader.getController();
         Scene chScene = new Scene(chatViewNode);
 
-
+        // przypisanie klasom kontrolującym sceny referencje do innych kontrolerów scen
         mainController.mainViewScene = mainScene;
         mainController.loginController = loginController;
         mainController.chatViewController = chatController;
@@ -48,10 +49,12 @@ public class Main extends Application {
 
         chatController.chatScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
 
+        // wyswietlenie sceny
         primaryStage.setScene(logScene);
         primaryStage.setTitle("TalkieApp");
         primaryStage.show();
 
+        // dodanie obslugi nagłego wyłączenia programu klienckiego (np. przez alt + f4)
         EventHandler quitHandler = new EventHandler<WindowEvent>() {
             public void handle(WindowEvent we) {
                 if (SocketManager.checkIfClientIsConnectedToServer()) {

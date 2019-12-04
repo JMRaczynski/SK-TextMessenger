@@ -43,7 +43,9 @@ public class SocketManager {
         String[] messages;
         String lastMessage;
         expectedLength = Integer.parseInt(words[1]) + words[1].length();
+
         System.out.println(expectedLength + " " + messageLength);
+        // odczyt wiadomości jest w pętli, dzięki temu zapewniamy poprawne działanie programu przy fragmentacji oraz sklejaniu wiadomości
         while (expectedLength != messageLength) {
             if (expectedLength > messageLength) {  // przychodzi fragment wiadomosci
                 Arrays.fill(buffer, (byte) 0);

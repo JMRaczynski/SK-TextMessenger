@@ -30,6 +30,7 @@ public class ChatViewController {
     public LoginController loginController;
     public Scene chatViewScene;
 
+    // obsluga wyslania wiadomosci, w tej metodzie dodajemy tez do GUI dymek z nasza wiadomoscia
     public void sendOnEnter(KeyEvent keyEvent){
         if (keyEvent.getCode() == KeyCode.ENTER) {
             String message = writeTextArea.getText();
@@ -51,6 +52,7 @@ public class ChatViewController {
         }
     }
 
+    // dodanie dymka z przychodzaca wiadomoscia
     public void showIncomingMessage(String message, String messageAuthor){
         if (!mainViewController.userChatViews.containsKey(messageAuthor)) {
             mainViewController.userChatViews.put(messageAuthor, mainViewController.createVBox());
@@ -65,7 +67,8 @@ public class ChatViewController {
         mainViewController.userChatViews.get(messageAuthor).getChildren().add(hBox);
     }
 
-    public void goBackButtonHandler() throws IOException {
+    // powrot do menu glownego (listy aktywnych uzytkownikow
+    public void goBackButtonHandler() {
         Stage window = (Stage)(goBackButton).getScene().getWindow();
         try {
             chatScrollPane.setContent(null);
@@ -76,14 +79,15 @@ public class ChatViewController {
             e.printStackTrace();
         }
         mainViewController.messageRecipient = "";
-        System.out.println("gb");
     }
 
+    // zmiana pola tekstowego na wiadomosc o tym, ze rozmowca sie wylogowal
     public void switchTextAreaForLoggedOutWarning() {
         logoutLabel.setVisible(true);
         writeTextArea.setVisible(false);
     }
 
+    // analogicznie do metody wyzej, dzieki temu uzytkownik nie musi wychodzic z okna czatu aby wyslac wiadomosc do uzytkownika ktory na chwile wyszedl i zaraz wrocil
     public void switchLoggedOutWarningForTextArea() {
         logoutLabel.setVisible(false);
         writeTextArea.setVisible(true);

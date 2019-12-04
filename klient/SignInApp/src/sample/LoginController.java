@@ -13,7 +13,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.concurrent.Task;
 
-public class LoginController /*implements Initializable*/ {
+public class LoginController {
     @FXML private Label ipPortIntroductionLabel;
     @FXML private Label loginIntroductionLabel;
     @FXML private Label upperLabel;
@@ -29,8 +29,9 @@ public class LoginController /*implements Initializable*/ {
     public String userNick;
 
 
-    public void connectToServer(ActionEvent event) throws IOException
+    public void connectToServer(ActionEvent event)
     {
+        // pobranie z pól tekstowych adresu ip i portu serwera i próba połączenia z serwerem
         String ipAddress = upperTextField.getText();
         try {
             Integer portNumber = Integer.parseInt(lowerTextField.getText());
@@ -41,9 +42,11 @@ public class LoginController /*implements Initializable*/ {
             upperTextField.requestFocus();
             return;
         }
+        // zmiana sceny
         changeIpInputWindowToLoginWindow();
         SocketManager.setIsClientConnectedToServer();
 
+        // kod wątku nasłuchującego wiadomości od serwera
         Task<Integer> readMessagesFromServer = new Task<Integer>() {
             @Override protected Integer call() throws Exception {
                 ArrayList<String> incomingMessages;
@@ -56,8 +59,8 @@ public class LoginController /*implements Initializable*/ {
                         incomingMessages.remove(0);
                         System.out.println("Wiadomosc: " + received);
                         switch(received.charAt(0)) {
-                            case 'P': // blędne hasło
-                                Platform.runLater(new Runnable() {
+                            case 'P': // wiadomość o wpisaniu blędnego hasła
+                                Platform.runLater(new Runnable() { // runnable są potrzebne, gdyż to wątek główny musi manipulować elementami na scenie (wymaganie JavaFX)
                                     @Override
                                     public void run() {
                                         warningLabel.setText("Dane nieprawidłowe! Spróbuj ponownie");
@@ -65,7 +68,7 @@ public class LoginController /*implements Initializable*/ {
                                     }
                                 });
                                 break;
-                            case 'a': // logowanie na już zalogowanego użytkownika
+                            case 'a': // wiadomość o próbie zalogowania na konto już zalogowanego użytkownika
                                 Platform.runLater(new Runnable() {
                                     @Override
                                     public void run() {
@@ -74,17 +77,13 @@ public class LoginController /*implements Initializable*/ {
                                     }
                                 });
                                 break;
-                            case 'W': // witamy - poprawne zalogowanie
+                            case 'W': // witamy - wiadomość o poprawnym zalogowaniu
                                 System.out.println("Jestem " + upperTextField.getText());
                                 userNick = upperTextField.getText();
                                 Platform.runLater(new Runnable() {
                                     @Override
                                     public void run() {
-                                        try {
-                                            switchSceneToMainView();
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
-                                        }
+                                        switchSceneToMainView();
                                     }
                                 });
                                 break;
@@ -93,14 +92,10 @@ public class LoginController /*implements Initializable*/ {
                                 Platform.runLater(new Runnable() {
                                     @Override
                                     public void run() {
-                                        try {
-                                            mainViewController.showActiveUsers(users);
-                                            mainViewController.initializeUserMap();
-                                            mainViewController.initializeUnreadAuthorsList();
-                                            mainViewController.updateNewMessagesLabel();
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
-                                        }
+                                        mainViewController.showActiveUsers(users);
+                                        mainViewController.initializeUserMap();
+                                        mainViewController.initializeUnreadAuthorsList();
+                                        mainViewController.updateNewMessagesLabel();
                                     }
                                 });
                                 break;
@@ -168,6 +163,7 @@ public class LoginController /*implements Initializable*/ {
             }
         };
 
+        // utworzenie wątku i uruchomienie go
         Thread th = new Thread(readMessagesFromServer);
         th.setDaemon(true);
         th.start();
@@ -186,20 +182,22 @@ public class LoginController /*implements Initializable*/ {
         goNextButton.setDisable(true);
         goNextButton.setVisible(false);
         warningLabel.setVisible(false);
-
-        //DOUSUNIECIA
-        upperTextField.setText("adolf");
-        lowerTextField.setText("hitler");
     }
 
     public void sendCredentialsToServer(ActionEvent event) {
         String login = upperTextField.getText();
         String password = lowerTextField.getText();
-        SocketManager.sendMessage(login + ' ' + password + '\n', "l");
+        if (!login.equals("") && !password.equals("")) {
+            SocketManager.sendMessage(login + ' ' + password + '\n', "l");
+        }
+        else {
+            warningLabel.setVisible(true);
+        }
     }
 
-    private void switchSceneToMainView() throws IOException {
+    private void switchSceneToMainView() {
         //This line gets the Stage information
+        warningLabel.setVisible(false);
         Stage window = (Stage)(loginButton).getScene().getWindow();
         window.setTitle("TalkieApp - " + upperTextField.getText());
         try {

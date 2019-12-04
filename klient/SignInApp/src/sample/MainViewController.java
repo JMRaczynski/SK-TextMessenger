@@ -43,7 +43,7 @@ public class MainViewController {
         userChatViews = new HashMap<>();
     }
 
-    public void showActiveUsers(String[] users) throws IOException
+    public void showActiveUsers(String[] users)
     {
         userList = FXCollections.<String>observableArrayList();
         for (int i = 2; i < users.length; i++) {
@@ -53,6 +53,7 @@ public class MainViewController {
         listOfActive.getSelectionModel().getSelectedItem();
     }
 
+    // wyswietlanie i chowanie listy uzytkownikow, od ktorych mamy nieprzeczytane wiadomosci
     public void newMessageButtonHandler(ActionEvent event){
         if(!incomingVisibilityState) {
             incomingListView.setItems(unreadMessagesAuthors);
@@ -67,6 +68,7 @@ public class MainViewController {
         }
     }
 
+    // zmiana sceny na okno czatu po wybraniu uzytkownika, od ktorego mamy nieprzeczytana wiadomosc
     public void incomingListHandler(MouseEvent mouseEvent){
         if (mouseEvent.isPrimaryButtonDown() && mouseEvent.getClickCount() == 2) {
             System.out.println(incomingListView.getSelectionModel().getSelectedItem());
@@ -76,8 +78,7 @@ public class MainViewController {
         incomingVisibilityState = false;
     }
 
-    public void logoutButtonHandler(ActionEvent event) throws IOException {
-
+    public void logoutButtonHandler(ActionEvent event) {
         SocketManager.sendMessage("sampletext", "o");
         Stage window = (Stage)(logoutButton).getScene().getWindow();
         try {
@@ -86,7 +87,7 @@ public class MainViewController {
             window.setTitle("Talkie App");
         }
         catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 
@@ -126,14 +127,14 @@ public class MainViewController {
         }
     }
 
+    // utworzenie kontenera na dymki z wiadomościami w konkretnej konwersacji
     public VBox createVBox(){
-        System.out.println("Nowy pane dla " + messageRecipient); // <- ten output jest bardzo mylacy <ROBI ZAMĘT JAK JA PIER****>, gdyz ta funkcja jest wywolywana tez przy otrzymaniu wiadomosci. Wtedy messageRecipient jest pusty, co pokazuje komunikat. Mimo to VBox tworzony jest poprawnie - dla nadawcy.
+        System.out.println("Nowy pane dla " + messageRecipient);
         VBox userBox = new VBox();
         userBox.setPrefWidth(chatViewController.chatScrollPane.getPrefWidth()-20);
         userBox.setMinHeight(chatViewController.chatScrollPane.getPrefHeight()-20);
         userBox.getStyleClass().add("vbox");
         userBox.setSpacing(10);
-        //chatViewController.chatScrollPane.setContent(userBox); <- to był błąd, powód j.w. PONADTO śmiem twierdzić, że usunięcie tej linii wcale nie psuje programu, gdyż w funkcji switchToChatView (jest ona wyżej, w tym kontrolerze) też ustawiasz ten pane jako content scrollpane'a
         chatViewController.chatScrollPane.vvalueProperty().bind(userBox.heightProperty());
         return userBox;
     }
