@@ -17,6 +17,7 @@
 
 #include "Server.h"
 
+// inicjalizacja mutexow
 std::mutex Server::logoutMutex;
 std::mutex Server::writeMutex;
 std::mutex Server::userInfoMutex;

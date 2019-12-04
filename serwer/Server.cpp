@@ -17,7 +17,6 @@ Server::Server(uint16_t portNumber) {
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = htonl(INADDR_ANY);
     address.sin_port = htons(portNumber);
-    //reuseAddressValue = 1;
     for (int i = 0; i < MAX_NUMBER_OF_CONCURRENT_CLIENTS; i++) {
         connectionIdsToUserIndexesMap[i] = -1;
     } 
@@ -32,7 +31,6 @@ void Server::initialize(int connectionQueueSize) {
         fprintf(stderr, "Błąd przy próbie utworzenia gniazda..\n");
         exit(1);
     }
-    //setsockopt(socketDescriptor, SOL_SOCKET, SO_REUSEADDR, (char *)&reuseAddressValue, sizeof(reuseAddressValue));
     bindResult = bind(socketDescriptor, (struct sockaddr*) &address, sizeof(struct sockaddr));
     if (bindResult < 0) {
         fprintf(stderr, "Błąd przy próbie przypisania adresu do gniazda..\n");
@@ -74,6 +72,7 @@ int Server::assignConnectionId() {
     return -1;
 }
 
+// kod wątku ↓
 void Server::threadRoutine(int connectionId) {
     std::string login, password, listOfOnlineUsers;
     std::string receivedMessage;
@@ -90,7 +89,8 @@ void Server::threadRoutine(int connectionId) {
     unsigned int userIndex;
     bool areCredentialsCorrect = false, isUserLoggedInAlready = false;
     int clientSocketDescriptor = connectionSocketDescriptors[connectionId];
-    std::cout << "w watku przed petla\n";
+    //std::cout << "w watku przed petla\n";
+    // odczytywanie wiadomosci w petli, algorytm w zasadzie identyczny jak po stronie klienta
     while (receivedMessageBuffer[0] != 'q' && receivedMessageBuffer[0] != '0') {
 
         gluedMessages.clear();
@@ -139,6 +139,7 @@ void Server::threadRoutine(int connectionId) {
             }
         }
         if (incomingMessages.size() == 0) incomingMessages.push_back(receivedMessage);
+        // koniec odczytywania
 
         while(incomingMessages.size() > 0) {
             memset(receivedMessageBuffer, 0, BUFFER_SIZE);
@@ -150,7 +151,7 @@ void Server::threadRoutine(int connectionId) {
             incomingMessages[0] = '\0';
             incomingMessages.erase(incomingMessages.begin());
             
-
+            // rozne zachowanie w zaleznosci od prefiksu otrzymanej wiadomosci
             if (receivedMessageBuffer[0] == 'q' || receivedMessageBuffer[0] == '0' || receivedMessageBuffer[0] == 'o') {
                 userInfoMutex.lock();
                 announceStateChange(userIndex, clientSocketDescriptor, "o ");
@@ -167,6 +168,7 @@ void Server::threadRoutine(int connectionId) {
                 logoutMutex.unlock();
                 break;
             }
+            
             switch (receivedMessageBuffer[0]) {
             case 'l':
                 parseLoginAndPassword(readResult - 3, receivedMessageBuffer, &login, &password);
@@ -199,20 +201,13 @@ void Server::threadRoutine(int connectionId) {
             }
         }
     }
-
-    /*if (userInformation[userIndex].isOnline) {
-        announceStateChange(userIndex, clientSocketDescriptor, "o ");
-        setUserAsOffline(userIndex);
-        userInformation[userIndex].socketDescriptor = -1;
-        connectionIdsToUserIndexesMap[userIndex] = -1;
-    }*/
-    //isIdBusy[connectionId] = false;
 }
 
 void Server::parseLoginAndPassword(int numberOfReadCharacters, char *message, std::string *login, std::string *password) {
     *login = "";
     *password = "";
     unsigned int iterator;
+    // od indeksu 2, bo jednoznakowy prefiks i spacja (dlugosc wiadomosci jest z niej wyrzucana na etapie odbioru)
     for (iterator = 2; iterator < numberOfReadCharacters; iterator++) {
         if (message[iterator] != ' ') {
             *login += message[iterator];
@@ -314,15 +309,14 @@ void Server::sendListOfOnlineUsersToClient(int clientSocketDescriptor, std::stri
     char messageBuffer[list.length() + 1];
     strcpy(messageBuffer, list.c_str());
     std::cout << messageBuffer << "<- lista ludzi online\n";
-    std::cout << strlen(messageBuffer) << "<- dlugosc listy\n";
     writeMutex.lock();
     writeResult = write(clientSocketDescriptor, messageBuffer, strlen(messageBuffer));
     writeMutex.unlock();
-    std::cout << messageBuffer << " <- Dlugosc odeslanej listy\n";
     if (writeResult < 0) {
         fprintf(stderr, "Błąd przy próbie zapisu wiadomosci..\n");
         exit(1);
     }
+    std::cout << messageBuffer << " <- wyslana lista\n";
 }
 
 void Server::sendUserAlreadyLoggedInMessage(int clientSocketDescriptor) {
