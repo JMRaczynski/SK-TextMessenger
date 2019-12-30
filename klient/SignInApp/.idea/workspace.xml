@@ -3,6 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="c2726833-fd9d-49e2-8a87-d12afded0b4d" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/SignInApp/sample/SocketManager.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/SignInApp/sample/SocketManager.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/sample/SocketManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/sample/SocketManager.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -76,6 +78,7 @@
       <workItem from="1575491894708" duration="1836000" />
       <workItem from="1575657239647" duration="626000" />
       <workItem from="1576617406912" duration="282000" />
+      <workItem from="1577737451486" duration="525000" />
     </task>
     <servers />
   </component>

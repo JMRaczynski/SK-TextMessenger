@@ -28,7 +28,15 @@ public class SocketManager {
             message = prefix + " " + messageLength + " " + message;
         }
         System.out.println("wyslana wiadomosc: " + message);
-        outputStream.println(message);
+        String finalMessage = message;
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                outputStream.println(finalMessage);
+            }
+        };
+        new Thread(r).start();
+        //outputStream.println(message);
     }
 
     static public ArrayList<String> receiveMessage() throws IOException {
