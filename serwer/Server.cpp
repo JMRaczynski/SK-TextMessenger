@@ -25,7 +25,6 @@ Server::Server(uint16_t portNumber) {
 void Server::initialize(int connectionQueueSize) {
     int bindResult;
     int listenResult;
-    int setSocketOptionsResult;
     socketDescriptor = socket(AF_INET, SOCK_STREAM, 0);
     if (socketDescriptor < 0) {
         fprintf(stderr, "Błąd przy próbie utworzenia gniazda..\n");
@@ -84,8 +83,8 @@ void Server::threadRoutine(int connectionId) {
     char sentMessageBuffer[BUFFER_SIZE];
     memset(receivedMessageBuffer, 0, BUFFER_SIZE);
     int readResult;
-    int expectedLength;
-    int messageLength;
+    unsigned int expectedLength;
+    unsigned int messageLength;
     unsigned int userIndex;
     bool areCredentialsCorrect = false, isUserLoggedInAlready = false;
     int clientSocketDescriptor = connectionSocketDescriptors[connectionId];
@@ -124,7 +123,7 @@ void Server::threadRoutine(int connectionId) {
             }
             if (expectedLength < messageLength) {
                 gluedMessages = split(receivedMessage, "\n");
-                for (int i = 0; i < gluedMessages.size() - 1; i++) {
+                for (unsigned int i = 0; i < gluedMessages.size() - 1; i++) {
                     incomingMessages.push_back(receivedMessage);
                 }
                 lastOfGluedMessages = gluedMessages[gluedMessages.size() - 1];
@@ -206,7 +205,7 @@ void Server::threadRoutine(int connectionId) {
 void Server::parseLoginAndPassword(int numberOfReadCharacters, char *message, std::string *login, std::string *password) {
     *login = "";
     *password = "";
-    unsigned int iterator;
+    int iterator;
     // od indeksu 2, bo jednoznakowy prefiks i spacja (dlugosc wiadomosci jest z niej wyrzucana na etapie odbioru)
     for (iterator = 2; iterator < numberOfReadCharacters; iterator++) {
         if (message[iterator] != ' ') {
@@ -236,11 +235,14 @@ bool Server::checkIfCredentialsAreCorrectAndAddUserDataIfHeIsNew(std::string log
 }
 
 unsigned int Server::getUserIndex(std::string login) {
+    unsigned int toReturn = 0;
     for (unsigned int i = 0; i < userInformation.size(); i++) {
         if (userInformation[i].username.compare(login) == 0) {
-            return i;
+            toReturn = i;
+            break; 
         }
     }
+    return toReturn;
 }
 
 bool Server::checkIfUserIsLoggedInAlready(unsigned int userIndex) {
@@ -326,6 +328,10 @@ void Server::sendUserAlreadyLoggedInMessage(int clientSocketDescriptor) {
     strcpy(messageBuffer, "a 25 useralreadyloggedinrip");
     writeMutex.lock();
     writeResult = write(clientSocketDescriptor, messageBuffer, strlen(messageBuffer));
+    if (writeResult < 0) {
+        fprintf(stderr, "Błąd przy próbie zapisu wiadomosci..\n");
+        exit(1);
+    }
     writeMutex.unlock();
 }
 
@@ -334,7 +340,6 @@ void Server::sendMessage(char* message, unsigned int userIndex) {
     std::string recipientNick = "";
     std::string properMessage = "m " + userInformation[userIndex].username + " ";
     unsigned int iterator = 2;
-    unsigned int properMessageIndex = 0;
     for (; iterator < strlen(message); iterator++) {
         if (message[iterator] == ' ') {
             iterator++;
