@@ -21,6 +21,7 @@
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_package_manager_path" value="npm" />
   </component>
   <component name="RunDashboard">
@@ -72,7 +73,9 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1575491890996</updated>
-      <workItem from="1575491894708" duration="328000" />
+      <workItem from="1575491894708" duration="1836000" />
+      <workItem from="1575657239647" duration="626000" />
+      <workItem from="1576617406912" duration="282000" />
     </task>
     <servers />
   </component>
@@ -84,7 +87,9 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>
